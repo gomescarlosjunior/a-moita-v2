@@ -1,26 +1,28 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    appDir: true,
-    turbo: {
-      rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
-      },
-    },
-  },
+  // Image optimization
   images: {
     domains: ['localhost'],
     formats: ['image/webp', 'image/avif'],
   },
+  // TypeScript configuration
   typescript: {
     ignoreBuildErrors: false,
   },
-  eslint: {
-    ignoreDuringBuilds: false,
-  },
+  // React configuration
+  reactStrictMode: true,
+  // Enable Turbopack
+  experimental: {
+    turbo: {
+      // Add any Turbopack-specific configurations here
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.svg'
+        }
+      }
+    }
+  }
 }
 
 module.exports = nextConfig
