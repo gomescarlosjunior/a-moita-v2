@@ -104,23 +104,23 @@ export default function HomePage() {
                 <Image
                   src="/assets/branding/logo-white.svg"
                   alt="A Moita"
-                  width={120}
-                  height={40}
-                  className="h-8 w-auto"
+                  width={144}
+                  height={48}
+                  className="h-10 w-auto md:h-12"
                   priority
                 />
               </Link>
               
               {/* Desktop Navigation */}
-              <div className="hidden md:flex items-center space-x-8">
-                <a href="#" className="text-gray-100 hover:text-gold-300 transition-colors">Início</a>
-                <a href="#nossos-pilares" className="text-gray-100 hover:text-gold-300 transition-colors">Sobre</a>
-                <a href="#chales" className="text-gray-100 hover:text-gold-300 transition-colors">Chalés</a>
+              <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
+                <a href="#" className="text-base lg:text-lg text-gray-100 hover:text-gold-300 transition-colors">Início</a>
+                <a href="#nossos-pilares" className="text-base lg:text-lg text-gray-100 hover:text-gold-300 transition-colors">Sobre</a>
+                <a href="#chales" className="text-base lg:text-lg text-gray-100 hover:text-gold-300 transition-colors">Chalés</a>
                 <a 
                   href="https://wa.me/5562991639312?text=Olá, temos dias disponíveis?" 
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-gold-300 hover:bg-gold-400 text-teal-900 font-medium py-2 px-6 rounded-full transition-colors"
+                  className="bg-gold-300 hover:bg-gold-400 text-teal-900 font-medium py-2 px-4 lg:px-6 rounded-full transition-colors text-sm lg:text-base"
                 >
                   Reservar
                 </a>
@@ -128,28 +128,54 @@ export default function HomePage() {
 
               {/* Mobile menu button */}
               <button 
-                className="md:hidden text-gray-100"
+                className="md:hidden text-gray-100 p-2 -mr-2"
                 onClick={() => setMobileNavOpen(!mobileNavOpen)}
                 aria-label="Toggle menu"
+                aria-expanded={mobileNavOpen}
               >
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
+                {mobileNavOpen ? (
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                ) : (
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                )}
               </button>
             </div>
           </div>
 
           {/* Mobile Navigation */}
-          <div className={`md:hidden ${mobileNavOpen ? 'block' : 'hidden'}`}>
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-teal-700/50 backdrop-blur-sm mt-4 rounded-lg">
-              <a href="#" className="block px-3 py-2 text-base font-medium text-gray-100 hover:bg-teal-700/30 rounded-md">Início</a>
-              <a href="#nossos-pilares" className="block px-3 py-2 text-base font-medium text-gray-100 hover:bg-teal-700/30 rounded-md">Sobre</a>
-              <a href="#chales" className="block px-3 py-2 text-base font-medium text-gray-100 hover:bg-teal-700/30 rounded-md">Chalés</a>
+          <div className={`md:hidden transition-all duration-300 ease-in-out ${mobileNavOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
+            <div className="px-4 pt-2 pb-4 space-y-2 bg-teal-800/95 backdrop-blur-sm mt-4 rounded-lg shadow-lg">
+              <a 
+                href="#" 
+                className="block px-4 py-3 text-base font-medium text-gray-100 hover:bg-teal-700/30 rounded-md transition-colors"
+                onClick={() => setMobileNavOpen(false)}
+              >
+                Início
+              </a>
+              <a 
+                href="#nossos-pilares" 
+                className="block px-4 py-3 text-base font-medium text-gray-100 hover:bg-teal-700/30 rounded-md transition-colors"
+                onClick={() => setMobileNavOpen(false)}
+              >
+                Sobre
+              </a>
+              <a 
+                href="#chales" 
+                className="block px-4 py-3 text-base font-medium text-gray-100 hover:bg-teal-700/30 rounded-md transition-colors"
+                onClick={() => setMobileNavOpen(false)}
+              >
+                Chalés
+              </a>
               <a 
                 href="https://wa.me/5562991639312?text=Olá, temos dias disponíveis?" 
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block px-3 py-2 text-base font-medium text-teal-900 bg-gold-300 hover:bg-gold-400 rounded-md text-center"
+                className="block w-full text-center bg-gold-300 hover:bg-gold-400 text-teal-900 font-medium py-2 px-6 rounded-full transition-colors mt-2"
+                onClick={() => setMobileNavOpen(false)}
               >
                 Reservar
               </a>
