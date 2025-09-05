@@ -10,8 +10,15 @@ const figtree = Figtree({
 
 export const metadata: Metadata = {
   title: 'A Moita - Green Energy Solutions',
-  description: 'Our commitment to green energy is paving the way for a cleaner, healthier planet. Join us on a journey towards a future where clean, renewable energy sources transform the way we power our lives.',
-  keywords: ['green energy', 'renewable energy', 'solar power', 'wind energy', 'sustainability'],
+  description:
+    'Our commitment to green energy is paving the way for a cleaner, healthier planet. Join us on a journey towards a future where clean, renewable energy sources transform the way we power our lives.',
+  keywords: [
+    'green energy',
+    'renewable energy',
+    'solar power',
+    'wind energy',
+    'sustainability',
+  ],
   authors: [{ name: 'A Moita' }],
   viewport: 'width=device-width, initial-scale=1',
 }
@@ -27,7 +34,9 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
       </head>
-      <body className={`${figtree.className} antialiased bg-body text-body font-body`}>
+      <body
+        className={`${figtree.className} text-body bg-body font-body antialiased`}
+      >
         {children}
       </body>
     </html>

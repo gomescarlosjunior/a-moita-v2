@@ -18,62 +18,62 @@ env:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-    
-    - name: Install pnpm
-      run: npm install -g pnpm@${{ env.PNPM_VERSION }}
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Verify setup
-      run: |
-        node -v
-        pnpm -v
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
-    - name: Install dependencies
-      run: pnpm install --frozen-lockfile
+      - name: Install pnpm
+        run: npm install -g pnpm@${{ env.PNPM_VERSION }}
 
-    - name: Check formatting
-      run: pnpm format:check
+      - name: Verify setup
+        run: |
+          node -v
+          pnpm -v
 
-    - name: Type check
-      run: pnpm type-check
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-    - name: Lint
-      run: pnpm lint:ci
+      - name: Check formatting
+        run: pnpm format:check
 
-    - name: Test
-      run: pnpm test
+      - name: Type check
+        run: pnpm type-check
 
-    - name: Build
-      run: pnpm build
-      env:
-        NEXT_PUBLIC_SITE_URL: ${{ env.NEXT_PUBLIC_SITE_URL }}
-    
-    - name: Deploy to Vercel
-      if: github.ref == 'refs/heads/main'
-      uses: amondnet/vercel-action@v25
-      with:
-        vercel-token: ${{ secrets.VERCEL_TOKEN }}
-        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-        working-directory: ./
-        vercel-args: '--prod'
+      - name: Lint
+        run: pnpm lint:ci
 
-    - name: Upload build artifacts on failure
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-logs-and-artifacts
-        path: |
-          .next/**
-          pnpm-debug.log*
-          npm-debug.log*
-          yarn-error.log*
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+        env:
+          NEXT_PUBLIC_SITE_URL: ${{ env.NEXT_PUBLIC_SITE_URL }}
+
+      - name: Deploy to Vercel
+        if: github.ref == 'refs/heads/main'
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./
+          vercel-args: '--prod'
+
+      - name: Upload build artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs-and-artifacts
+          path: |
+            .next/**
+            pnpm-debug.log*
+            npm-debug.log*
+            yarn-error.log*

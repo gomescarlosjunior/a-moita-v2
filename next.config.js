@@ -18,11 +18,11 @@ const nextConfig = {
       rules: {
         '*.svg': {
           loaders: ['@svgr/webpack'],
-          as: '*.svg'
-        }
-      }
-    }
-  }
+          as: '*.svg',
+        },
+      },
+    },
+  },
 }
 
 module.exports = nextConfig

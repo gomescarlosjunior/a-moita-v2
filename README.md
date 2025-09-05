@@ -19,10 +19,11 @@ Site oficial da A Moita - Refúgio no Cerrado
    - pnpm 8+
 
 2. **Instalação**
+
    ```bash
    # Instalar dependências
    pnpm install
-   
+
    # Iniciar servidor de desenvolvimento
    pnpm dev
    ```
