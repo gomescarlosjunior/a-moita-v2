@@ -11,6 +11,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '8'
   NEXT_PUBLIC_SITE_URL: https://a-moita.vercel.app
 
 jobs:
@@ -25,14 +27,17 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: ${{ env.NODE_VERSION }}
         cache: 'pnpm'
     
     - name: Install pnpm
       uses: pnpm/action-setup@v3
       with:
-        version: 8
+        version: ${{ env.PNPM_VERSION }}
         run_install: true
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
 
     - name: Check formatting
       run: pnpm format:check
