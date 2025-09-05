@@ -30,11 +30,19 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
         cache: 'pnpm'
     
-    - name: Install pnpm
-      uses: pnpm/action-setup@v3
-      with:
-        version: ${{ env.PNPM_VERSION }}
-        run_install: true
+    # Ensure pnpm is available via Corepack (bundled with Node >=16.13)
+    - name: Enable Corepack
+      run: corepack enable
+
+    - name: Activate pnpm
+      run: corepack prepare pnpm@${{ env.PNPM_VERSION }} --activate
+
+    # Fallback: install pnpm globally if not available (rare runners)
+    - name: Ensure pnpm is available
+      run: |
+        if ! command -v pnpm >/dev/null 2>&1; then
+          npm i -g pnpm@${PNPM_VERSION}
+        fi
 
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
