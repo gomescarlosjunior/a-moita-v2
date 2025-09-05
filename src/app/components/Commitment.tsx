@@ -1,53 +1,8 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import Image from 'next/image'
 
 export default function Commitment() {
-  const commitmentItems = [
-    {
-      title: 'Soluções Sustentáveis',
-      description:
-        'Desenvolvemos e implementamos soluções inovadoras que reduzem o impacto ambiental, mantendo alta eficiência e confiabilidade.',
-    },
-    {
-      title: 'Impacto na Comunidade',
-      description:
-        'Nossas iniciativas vão além da tecnologia, criando empregos e apoiando as comunidades locais na transição para fontes de energia sustentáveis.',
-    },
-    {
-      title: 'Inovação & Pesquisa',
-      description:
-        'Investimos fortemente em pesquisa e desenvolvimento para expandir as possibilidades da tecnologia de energia renovável.',
-    },
-    {
-      title: 'Responsabilidade Ambiental',
-      description:
-        'Proteger nosso planeta está no centro de tudo o que fazemos, desde o abastecimento responsável até a minimização de nossa pegada de carbono.',
-    },
-  ]
-
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  }
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-      },
-    },
-  }
-
   return (
     <section id="chales" className="overflow-hidden py-12 lg:py-24">
       <div className="container mx-auto px-4">

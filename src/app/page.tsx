@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import dynamic from 'next/dynamic'
 
 // Dynamically import components with no SSR
@@ -15,31 +14,6 @@ const Commitment = dynamic(() => import('@/app/components/Commitment'), {
 
 export default function HomePage() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
-  const [activeSlide, setActiveSlide] = useState(1)
-  const slideCount = 3
-
-  const testimonials = [
-    {
-      quote:
-        'Flow transformed my energy use. Efficient, green tech, outstanding service!',
-      author: 'Jenny Wilson',
-      role: 'Solar energy service',
-      image: '/assets/ui/testimonial-avatar.jpg',
-    },
-    {
-      quote: 'Efficient, green tech, outstanding service',
-      author: 'John Jones',
-      role: 'CEO Solar Company',
-      image: '/assets/ui/testimonial-avatar.jpg',
-    },
-    {
-      quote:
-        'Flow transformed my energy use, efficient, green tech, outstanding service.',
-      author: 'James Harrison',
-      role: 'Developer',
-      image: '/assets/ui/testimonial-avatar.jpg',
-    },
-  ]
 
   const solutions = [
     {
@@ -496,64 +470,6 @@ export default function HomePage() {
 
       {/* Commitment Section */}
       <Commitment />
-
-      {/* Testimonials Section - Commented out for now
-      <section className="py-12 lg:py-24 overflow-hidden">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-wrap items-center -mx-4">
-            <div className="w-full md:w-1/2 px-4 mb-12 md:mb-0">
-              <div className="max-w-lg mx-auto md:mx-0 overflow-hidden">
-                <div 
-                  className="flex -mx-4 transition-transform duration-500"
-                  style={{ transform: `translateX(-${(activeSlide - 1) * 100}%)` }}
-                >
-                  {testimonials.map((testimonial, index) => (
-                    <Image
-                      key={index}
-                      className="block flex-shrink-0 w-full px-4"
-                      src={testimonial.image}
-                      alt={`${testimonial.author} testimonial`}
-                      width={400}
-                      height={400}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="w-full md:w-1/2 px-4">
-              <div className="max-w-lg mx-auto md:mr-0 overflow-hidden">
-                <div 
-                  className="flex -mx-4 transition-transform duration-500"
-                  style={{ transform: `translateX(-${(activeSlide - 1) * 100}%)` }}
-                >
-                  {testimonials.map((testimonial, index) => (
-                    <div key={index} className="flex-shrink-0 px-4 w-full">
-                      <h4 className="text-3xl lg:text-4xl font-medium mb-10">"{testimonial.quote}"</h4>
-                      <span className="block text-xl font-medium">{testimonial.author}</span>
-                      <span className="block mb-12 lg:mb-32 text-lg text-gray-700">{testimonial.role}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="flex gap-4">
-                  <button
-                    onClick={() => setActiveSlide(activeSlide > 1 ? activeSlide - 1 : slideCount)}
-                    className="inline-block text-gray-700 hover:text-lime-500 transition-colors"
-                  >
-                    <ChevronLeftIcon className="w-8 h-8" />
-                  </button>
-                  <button
-                    onClick={() => setActiveSlide(activeSlide < slideCount ? activeSlide + 1 : 1)}
-                    className="inline-block text-gray-700 hover:text-lime-500 transition-colors"
-                  >
-                    <ChevronRightIcon className="w-8 h-8" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      */}
 
       {/* FAQ Section */}
       <FAQ />
