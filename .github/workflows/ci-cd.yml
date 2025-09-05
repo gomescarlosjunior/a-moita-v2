@@ -44,6 +44,14 @@ jobs:
           npm i -g pnpm@${PNPM_VERSION}
         fi
 
+    # Verify toolchain and output versions for debugging
+    - name: Verify Node and pnpm
+      run: |
+        node -v
+        corepack -v || true
+        which pnpm || true
+        pnpm -v
+
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
 
