@@ -28,38 +28,14 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ env.NODE_VERSION }}
-        cache: 'pnpm'
     
-    # Ensure pnpm is available via Corepack (bundled with Node >=16.13)
-    - name: Enable Corepack
-      run: corepack enable
-
-    - name: Activate pnpm
-      run: corepack prepare pnpm@${{ env.PNPM_VERSION }} --activate
-
-    # Fallback: install pnpm globally if not available (rare runners)
-    - name: Ensure pnpm is available
-      run: |
-        if ! command -v pnpm >/dev/null 2>&1; then
-          npm i -g pnpm@${PNPM_VERSION}
-        fi
-
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v4
-      with:
-        version: ${{ env.PNPM_VERSION }}
-        standalone: true
-
-    # Strong fallback: ensure pnpm is globally installed in PATH
-    - name: Install pnpm (fallback)
+    - name: Install pnpm
       run: npm install -g pnpm@${{ env.PNPM_VERSION }}
 
-    # Verify toolchain versions for debugging
-    - name: Verify Node and pnpm
+    - name: Verify setup
       run: |
         node -v
         pnpm -v
-        which pnpm || true
 
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
