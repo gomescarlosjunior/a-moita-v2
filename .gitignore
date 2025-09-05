@@ -14,21 +14,72 @@ build
 .env*.local
 
 # Debug logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
-# IDE
+# IDE and Editor
 .idea
-.vscode
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
-*.sw?
+*.swp
+*.swo
+
+# System Files
+.DS_Store
+Thumbs.db
 
 # Local development
-.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Vercel
 .vercel
+.vercel_build_output
+
+# Build output
+.next/
+out/
+
+# Cache
+.cache/
+.turbo/
+
+# Testing
+coverage/
+
+# Local backups and legacy directories
+src_backup/
+src_broken_*/
+with-turbopack-*/
+archive/
+
+# Local development files
+*.local.*
+
+# Misc
+*.pem
+*.pid
+*.pid.lock
+*.seed
+*.pid.lock
+
+# Package manager specific
+.pnpm-store/
+.yarn/
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
