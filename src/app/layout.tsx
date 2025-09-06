@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Figtree } from 'next/font/google'
 import './globals.css'
 
@@ -9,7 +9,7 @@ const figtree = Figtree({
 })
 
 export const metadata: Metadata = {
-  title: 'A Moita - Green Energy Solutions',
+  title: 'A Moita - Refúgio Natural',
   description:
     'Our commitment to green energy is paving the way for a cleaner, healthier planet. Join us on a journey towards a future where clean, renewable energy sources transform the way we power our lives.',
   keywords: [
@@ -20,7 +20,11 @@ export const metadata: Metadata = {
     'sustainability',
   ],
   authors: [{ name: 'A Moita' }],
-  viewport: 'width=device-width, initial-scale=1',
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
 }
 
 export default function RootLayout({
