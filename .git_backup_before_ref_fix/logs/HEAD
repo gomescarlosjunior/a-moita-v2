@@ -1,0 +1,21 @@
+0000000000000000000000000000000000000000 1242c1dbc0335f943c22678e885a0ef8525c009e gomescarlosjunior <gomes.carlosjr@gmail.com> 1756413816 -0300	commit (initial): New version of moita's website.
+1242c1dbc0335f943c22678e885a0ef8525c009e 976aaf84291c57afe733aa8c2081d266a1e044d0 gomescarlosjunior <gomes.carlosjr@gmail.com> 1756416985 -0300	commit: After catastrophizing, I realized that I needed to move on fast.
+976aaf84291c57afe733aa8c2081d266a1e044d0 c75b05c50f760fa57356c1a0e5fe430a8a2b486d gomescarlosjunior <gomes.carlosjr@gmail.com> 1756418039 -0300	commit: Initial commit
+c75b05c50f760fa57356c1a0e5fe430a8a2b486d 0000000000000000000000000000000000000000 gomescarlosjunior <gomes.carlosjr@gmail.com> 1756418061 -0300	Branch: renamed refs/heads/main to refs/heads/main
+c75b05c50f760fa57356c1a0e5fe430a8a2b486d c75b05c50f760fa57356c1a0e5fe430a8a2b486d gomescarlosjunior <gomes.carlosjr@gmail.com> 1756418061 -0300	Branch: renamed refs/heads/main to refs/heads/main
+c75b05c50f760fa57356c1a0e5fe430a8a2b486d ee457de1eff3cefc78a077fdfe28fe3d63c17dd2 gomescarlosjunior <gomes.carlosjr@gmail.com> 1756420005 -0300	commit: Mobile first, ci-cd and favicon fixes.
+ee457de1eff3cefc78a077fdfe28fe3d63c17dd2 0304efcd3e0e817b8a198fed2866ad44cae6ec5e gomescarlosjunior <gomes.carlosjr@gmail.com> 1757109817 -0300	commit: chore: update .gitignore with comprehensive exclusions
+0304efcd3e0e817b8a198fed2866ad44cae6ec5e 05f3615866a3df0036f40a496738c9c8777f0426 gomescarlosjunior <gomes.carlosjr@gmail.com> 1757110155 -0300	commit: fix: update workflow to properly install pnpm
+05f3615866a3df0036f40a496738c9c8777f0426 90947e8caef3dd5da5920d08b332de966a4d5601 gomescarlosjunior <gomes.carlosjr@gmail.com> 1757111279 -0300	commit: docs: add CI badge and DoD; trigger pipeline
+90947e8caef3dd5da5920d08b332de966a4d5601 e5b1cfa3099945e21ea5831cdd5520f919b7f68d gomescarlosjunior <gomes.carlosjr@gmail.com> 1757111564 -0300	commit: ci: switch from pnpm action to corepack for more reliable pnpm installation
+e5b1cfa3099945e21ea5831cdd5520f919b7f68d 6ff18153c550688476774267799eb4d4074ccaab gomescarlosjunior <gomes.carlosjr@gmail.com> 1757111829 -0300	commit: ci: ensure pnpm via corepack and fallback; add verification step
+6ff18153c550688476774267799eb4d4074ccaab 8763dc5398157cfb70fa41269aebcb7643fc76c9 gomescarlosjunior <gomes.carlosjr@gmail.com> 1757114827 -0300	commit: ci: switch from pnpm action to corepack for more reliable pnpm installation
+8763dc5398157cfb70fa41269aebcb7643fc76c9 c50eac16cd9baf9b2271efbfd99caf833bd7c48e gomescarlosjunior <gomes.carlosjr@gmail.com> 1757115148 -0300	commit: ci: fix pnpm setup with single npm global install
+c50eac16cd9baf9b2271efbfd99caf833bd7c48e 0ab79e844049e275e1507fbed53d7e42af7dabef gomescarlosjunior <gomes.carlosjr@gmail.com> 1757115259 -0300	commit: fix: auto-format all files with prettier
+0ab79e844049e275e1507fbed53d7e42af7dabef 9105ddb68d3be9eb675e8c6f425f45ef47053d42 gomescarlosjunior <gomes.carlosjr@gmail.com> 1757115377 -0300	commit: fix: remove unused imports and variables for ESLint
+9105ddb68d3be9eb675e8c6f425f45ef47053d42 d63281c9c2114b9d2882574855603c2d0ce834ae gomescarlosjunior <gomes.carlosjr@gmail.com> 1757120640 -0300	commit: fix: add scope and secret checks to Vercel deployment workflow
+d63281c9c2114b9d2882574855603c2d0ce834ae 7e1dfd136ef7d2a91d4ea184d34dedf7a601b19e gomescarlosjunior <gomes.carlosjr@gmail.com> 1757121659 -0300	commit: ci: safe secrets usage; non-interactive Vercel deploy with scope
+7e1dfd136ef7d2a91d4ea184d34dedf7a601b19e 3570074ddeb930e69532e6b23a88aeeccbbddf97 gomescarlosjunior <gomes.carlosjr@gmail.com> 1757122766 -0300	commit: fix: add scope and secret checks to Vercel deployment workflow
+3570074ddeb930e69532e6b23a88aeeccbbddf97 5bb94d00049a720fe9521c01bbfaad7db4d65bb8 gomescarlosjunior <gomes.carlosjr@gmail.com> 1757122859 -0300	commit: ci: migrate from vercel/actions to amondnet/vercel-action for deployments
+5bb94d00049a720fe9521c01bbfaad7db4d65bb8 5bb94d00049a720fe9521c01bbfaad7db4d65bb8 gomescarlosjunior <gomes.carlosjr@gmail.com> 1757123017 -0300	checkout: moving from main to backup-work-20250905-224337
+5bb94d00049a720fe9521c01bbfaad7db4d65bb8 7e1dfd136ef7d2a91d4ea184d34dedf7a601b19e gomescarlosjunior <gomes.carlosjr@gmail.com> 1757123030 -0300	checkout: moving from backup-work-20250905-224337 to main

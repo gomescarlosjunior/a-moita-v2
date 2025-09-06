@@ -1,0 +1,4 @@
+# pack-refs with: peeled fully-peeled sorted 
+5bb94d00049a720fe9521c01bbfaad7db4d65bb8 refs/heads/backup-work-20250905-224337
+7e1dfd136ef7d2a91d4ea184d34dedf7a601b19e refs/heads/main
+7e1dfd136ef7d2a91d4ea184d34dedf7a601b19e refs/remotes/origin/main
