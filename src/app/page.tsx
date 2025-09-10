@@ -386,12 +386,14 @@ export default function HomePage() {
                           {solution.title}
                         </h5>
                         <p className="mb-6">{solution.description}</p>
+                        {/* Comentando o botão Read more conforme solicitado
                         <Link
                           href="#"
                           className="inline-block text-lg font-medium transition-colors hover:text-teal-700"
                         >
                           Read more
                         </Link>
+                        */}
                       </div>
                     </div>
                   </motion.div>
