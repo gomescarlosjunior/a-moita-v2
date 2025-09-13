@@ -2,7 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeftIcon, ChevronRightIcon, CheckIcon } from '@heroicons/react/24/outline'
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  CheckIcon,
+} from '@heroicons/react/24/outline'
 
 interface SmartCalendarProps {
   onDateSelect?: (checkin: Date | null, checkout: Date | null) => void
@@ -15,24 +19,44 @@ interface DateRange {
   checkout: Date | null
 }
 
-export default function SmartCalendar({ onDateSelect, onBookingReady, className = '' }: SmartCalendarProps) {
+export default function SmartCalendar({
+  onDateSelect,
+  onBookingReady,
+  className = '',
+}: SmartCalendarProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [currentMonth, setCurrentMonth] = useState(new Date())
-  const [dateRange, setDateRange] = useState<DateRange>({ checkin: null, checkout: null })
+  const [dateRange, setDateRange] = useState<DateRange>({
+    checkin: null,
+    checkout: null,
+  })
   const [isBookingReady, setIsBookingReady] = useState(false)
   const [hoverDate, setHoverDate] = useState<Date | null>(null)
   const calendarRef = useRef<HTMLDivElement>(null)
 
   const months = [
-    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    'Janeiro',
+    'Fevereiro',
+    'Março',
+    'Abril',
+    'Maio',
+    'Junho',
+    'Julho',
+    'Agosto',
+    'Setembro',
+    'Outubro',
+    'Novembro',
+    'Dezembro',
   ]
 
   const weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
+      if (
+        calendarRef.current &&
+        !calendarRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false)
       }
     }
@@ -50,7 +74,7 @@ export default function SmartCalendar({ onDateSelect, onBookingReady, className 
     if (dateRange.checkin && dateRange.checkout) {
       setIsBookingReady(true)
       onDateSelect?.(dateRange.checkin, dateRange.checkout)
-      
+
       // Auto-close after selection
       setTimeout(() => {
         setIsOpen(false)
@@ -69,24 +93,24 @@ export default function SmartCalendar({ onDateSelect, onBookingReady, className 
     const startingDayOfWeek = firstDay.getDay()
 
     const days = []
-    
+
     // Add empty cells for days before the first day of the month
     for (let i = 0; i < startingDayOfWeek; i++) {
       days.push(null)
     }
-    
+
     // Add all days of the month
     for (let day = 1; day <= daysInMonth; day++) {
       days.push(new Date(year, month, day))
     }
-    
+
     return days
   }
 
   const handleDateClick = (date: Date) => {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-    
+
     if (date < today) return
 
     if (!dateRange.checkin || (dateRange.checkin && dateRange.checkout)) {
@@ -94,7 +118,7 @@ export default function SmartCalendar({ onDateSelect, onBookingReady, className 
       setDateRange({ checkin: date, checkout: null })
     } else if (date > dateRange.checkin) {
       // Second selection - checkout
-      setDateRange(prev => ({ ...prev, checkout: date }))
+      setDateRange((prev) => ({ ...prev, checkout: date }))
     } else {
       // Date is before checkin, reset
       setDateRange({ checkin: date, checkout: null })
@@ -103,10 +127,11 @@ export default function SmartCalendar({ onDateSelect, onBookingReady, className 
 
   const isDateInRange = (date: Date) => {
     if (!dateRange.checkin) return false
-    
-    const endDate = hoverDate && !dateRange.checkout && hoverDate > dateRange.checkin 
-      ? hoverDate 
-      : dateRange.checkout
+
+    const endDate =
+      hoverDate && !dateRange.checkout && hoverDate > dateRange.checkin
+        ? hoverDate
+        : dateRange.checkout
 
     if (!endDate) return false
 
@@ -114,8 +139,10 @@ export default function SmartCalendar({ onDateSelect, onBookingReady, className 
   }
 
   const isDateSelected = (date: Date) => {
-    return (dateRange.checkin && date.getTime() === dateRange.checkin.getTime()) ||
-           (dateRange.checkout && date.getTime() === dateRange.checkout.getTime())
+    return (
+      (dateRange.checkin && date.getTime() === dateRange.checkin.getTime()) ||
+      (dateRange.checkout && date.getTime() === dateRange.checkout.getTime())
+    )
   }
 
   const isDateDisabled = (date: Date) => {
@@ -126,10 +153,10 @@ export default function SmartCalendar({ onDateSelect, onBookingReady, className 
 
   const formatDate = (date: Date | null) => {
     if (!date) return ''
-    return date.toLocaleDateString('pt-BR', { 
-      day: '2-digit', 
-      month: '2-digit', 
-      year: 'numeric' 
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
     })
   }
 
@@ -140,7 +167,7 @@ export default function SmartCalendar({ onDateSelect, onBookingReady, className 
   }
 
   const navigateMonth = (direction: 'prev' | 'next') => {
-    setCurrentMonth(prev => {
+    setCurrentMonth((prev) => {
       const newMonth = new Date(prev)
       if (direction === 'prev') {
         newMonth.setMonth(prev.getMonth() - 1)
@@ -156,10 +183,10 @@ export default function SmartCalendar({ onDateSelect, onBookingReady, className 
       <style jsx global>{`
         :root {
           --font-primary: 'Cormorant Garamond', serif;
-          --accent: #D9C086;
-          --accent-dark: #0D2B24;
+          --accent: #d9c086;
+          --accent-dark: #0d2b24;
           --bg-primary: #f5f5f0;
-          --text-primary: #0D2B24;
+          --text-primary: #0d2b24;
           --transition-ease: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -261,8 +288,13 @@ export default function SmartCalendar({ onDateSelect, onBookingReady, className 
         }
 
         @keyframes pulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(217, 192, 134, 0.7); }
-          50% { box-shadow: 0 0 0 10px rgba(217, 192, 134, 0); }
+          0%,
+          100% {
+            box-shadow: 0 0 0 0 rgba(217, 192, 134, 0.7);
+          }
+          50% {
+            box-shadow: 0 0 0 10px rgba(217, 192, 134, 0);
+          }
         }
 
         .calendar-dropdown {
@@ -408,7 +440,7 @@ export default function SmartCalendar({ onDateSelect, onBookingReady, className 
       `}</style>
 
       <div className="calendar-inputs">
-        <div 
+        <div
           className={`date-input ${dateRange.checkin ? 'filled' : ''}`}
           onClick={() => setIsOpen(!isOpen)}
           role="button"
@@ -417,11 +449,13 @@ export default function SmartCalendar({ onDateSelect, onBookingReady, className 
         >
           <div className="label">Check-in</div>
           <div className={dateRange.checkin ? 'value' : 'placeholder'}>
-            {dateRange.checkin ? formatDate(dateRange.checkin) : 'Selecione a data'}
+            {dateRange.checkin
+              ? formatDate(dateRange.checkin)
+              : 'Selecione a data'}
           </div>
         </div>
 
-        <div 
+        <div
           className={`date-input ${dateRange.checkout ? 'filled' : ''}`}
           onClick={() => setIsOpen(!isOpen)}
           role="button"
@@ -430,7 +464,9 @@ export default function SmartCalendar({ onDateSelect, onBookingReady, className 
         >
           <div className="label">Check-out</div>
           <div className={dateRange.checkout ? 'value' : 'placeholder'}>
-            {dateRange.checkout ? formatDate(dateRange.checkout) : 'Selecione a data'}
+            {dateRange.checkout
+              ? formatDate(dateRange.checkout)
+              : 'Selecione a data'}
           </div>
         </div>
 
@@ -448,52 +484,54 @@ export default function SmartCalendar({ onDateSelect, onBookingReady, className 
         {isOpen && (
           <motion.div
             className="calendar-dropdown"
-            initial={{ 
-              maxHeight: 0, 
-              opacity: 0, 
-              y: -20 
+            initial={{
+              maxHeight: 0,
+              opacity: 0,
+              y: -20,
             }}
-            animate={{ 
-              maxHeight: 600, 
-              opacity: 1, 
-              y: 0 
+            animate={{
+              maxHeight: 600,
+              opacity: 1,
+              y: 0,
             }}
-            exit={{ 
-              maxHeight: 0, 
-              opacity: 0, 
-              y: -20 
+            exit={{
+              maxHeight: 0,
+              opacity: 0,
+              y: -20,
             }}
-            transition={{ 
-              duration: 0.4, 
-              ease: [0.25, 0.46, 0.45, 0.94] 
+            transition={{
+              duration: 0.4,
+              ease: [0.25, 0.46, 0.45, 0.94],
             }}
           >
             <div className="calendar-header">
-              <button 
+              <button
                 className="calendar-nav"
                 onClick={() => navigateMonth('prev')}
                 aria-label="Mês anterior"
               >
-                <ChevronLeftIcon className="w-5 h-5" />
+                <ChevronLeftIcon className="h-5 w-5" />
               </button>
-              
+
               <div className="calendar-title">
                 {months[currentMonth.getMonth()]} {currentMonth.getFullYear()}
               </div>
-              
-              <button 
+
+              <button
                 className="calendar-nav"
                 onClick={() => navigateMonth('next')}
                 aria-label="Próximo mês"
               >
-                <ChevronRightIcon className="w-5 h-5" />
+                <ChevronRightIcon className="h-5 w-5" />
               </button>
             </div>
 
             <div className="calendar-grid">
               <div className="weekdays">
-                {weekdays.map(day => (
-                  <div key={day} className="weekday">{day}</div>
+                {weekdays.map((day) => (
+                  <div key={day} className="weekday">
+                    {day}
+                  </div>
                 ))}
               </div>
 
@@ -506,8 +544,12 @@ export default function SmartCalendar({ onDateSelect, onBookingReady, className 
                   const isDisabled = isDateDisabled(date)
                   const isSelected = isDateSelected(date)
                   const inRange = isDateInRange(date)
-                  const isRangeStart = dateRange.checkin && date.getTime() === dateRange.checkin.getTime()
-                  const isRangeEnd = dateRange.checkout && date.getTime() === dateRange.checkout.getTime()
+                  const isRangeStart =
+                    dateRange.checkin &&
+                    date.getTime() === dateRange.checkin.getTime()
+                  const isRangeEnd =
+                    dateRange.checkout &&
+                    date.getTime() === dateRange.checkout.getTime()
 
                   return (
                     <motion.div
@@ -515,10 +557,10 @@ export default function SmartCalendar({ onDateSelect, onBookingReady, className 
                       className={`day-cell ${isDisabled ? 'disabled' : ''} ${isSelected ? 'selected' : ''} ${inRange ? 'in-range' : ''} ${isRangeStart ? 'range-start' : ''} ${isRangeEnd ? 'range-end' : ''}`}
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
-                      transition={{ 
+                      transition={{
                         delay: index * 0.01,
                         duration: 0.2,
-                        ease: 'easeOut'
+                        ease: 'easeOut',
                       }}
                       onClick={() => !isDisabled && handleDateClick(date)}
                       onMouseEnter={() => !isDisabled && setHoverDate(date)}

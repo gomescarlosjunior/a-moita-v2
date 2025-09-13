@@ -18,13 +18,14 @@ export async function GET(request: NextRequest) {
       propertyId,
       status,
       limit,
-      offset
+      offset,
     })
 
     // Transform the data to match our interface
     const transformedReservations = reservations.map((reservation: any) => ({
       id: reservation.id,
-      guestName: reservation.guestName || reservation.guest?.name || 'Unknown Guest',
+      guestName:
+        reservation.guestName || reservation.guest?.name || 'Unknown Guest',
       guestEmail: reservation.guestEmail || reservation.guest?.email || '',
       checkIn: reservation.checkIn || reservation.checkInDate,
       checkOut: reservation.checkOut || reservation.checkOutDate,
@@ -34,17 +35,17 @@ export async function GET(request: NextRequest) {
       totalAmount: reservation.totalAmount || reservation.total || 0,
       propertyId: reservation.propertyId || propertyId,
       createdAt: reservation.createdAt || new Date().toISOString(),
-      updatedAt: reservation.updatedAt || new Date().toISOString()
+      updatedAt: reservation.updatedAt || new Date().toISOString(),
     }))
 
     return NextResponse.json(transformedReservations)
   } catch (error) {
     console.error('Error fetching reservations:', error)
-    
+
     // Return mock data for development/testing
     const { searchParams } = new URL(request.url)
     const propertyId = searchParams.get('propertyId')
-    
+
     const mockReservations = [
       {
         id: 'res-001',
@@ -55,10 +56,10 @@ export async function GET(request: NextRequest) {
         guests: 2,
         status: 'confirmed' as const,
         channel: 'Airbnb',
-        totalAmount: 450.00,
+        totalAmount: 450.0,
         propertyId: propertyId || 'prop-001',
         createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-        updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
+        updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
       },
       {
         id: 'res-002',
@@ -69,10 +70,10 @@ export async function GET(request: NextRequest) {
         guests: 4,
         status: 'confirmed' as const,
         channel: 'Booking.com',
-        totalAmount: 1050.00,
+        totalAmount: 1050.0,
         propertyId: propertyId || 'prop-001',
         createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-        updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
+        updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
       },
       {
         id: 'res-003',
@@ -83,10 +84,12 @@ export async function GET(request: NextRequest) {
         guests: 3,
         status: 'completed' as const,
         channel: 'Airbnb',
-        totalAmount: 600.00,
+        totalAmount: 600.0,
         propertyId: propertyId || 'prop-001',
-        createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
-        updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
+        createdAt: new Date(
+          Date.now() - 14 * 24 * 60 * 60 * 1000
+        ).toISOString(),
+        updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
       },
       {
         id: 'res-004',
@@ -97,10 +100,10 @@ export async function GET(request: NextRequest) {
         guests: 2,
         status: 'pending' as const,
         channel: 'VRBO',
-        totalAmount: 400.00,
+        totalAmount: 400.0,
         propertyId: propertyId || 'prop-001',
         createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-        updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
+        updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
       },
       {
         id: 'res-005',
@@ -111,17 +114,23 @@ export async function GET(request: NextRequest) {
         guests: 1,
         status: 'completed' as const,
         channel: 'Booking.com',
-        totalAmount: 525.00,
+        totalAmount: 525.0,
         propertyId: propertyId || 'prop-001',
-        createdAt: new Date(Date.now() - 28 * 24 * 60 * 60 * 1000).toISOString(),
-        updatedAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString()
-      }
+        createdAt: new Date(
+          Date.now() - 28 * 24 * 60 * 60 * 1000
+        ).toISOString(),
+        updatedAt: new Date(
+          Date.now() - 14 * 24 * 60 * 60 * 1000
+        ).toISOString(),
+      },
     ]
 
     // Filter by propertyId if specified
     let filteredReservations = mockReservations
     if (propertyId) {
-      filteredReservations = mockReservations.filter(res => res.propertyId === propertyId)
+      filteredReservations = mockReservations.filter(
+        (res) => res.propertyId === propertyId
+      )
     }
 
     return NextResponse.json(filteredReservations)
@@ -132,7 +141,7 @@ export async function POST(request: NextRequest) {
   try {
     const config = getHostexConfig()
     const hostex = HostexIntegration.getInstance(config)
-    
+
     const body = await request.json()
     const { action, reservationId, ...data } = body
 
@@ -148,7 +157,10 @@ export async function POST(request: NextRequest) {
             { status: 400 }
           )
         }
-        const updatedReservation = await hostex.updateReservation(reservationId, data)
+        const updatedReservation = await hostex.updateReservation(
+          reservationId,
+          data
+        )
         return NextResponse.json(updatedReservation)
 
       case 'cancel':
@@ -158,7 +170,10 @@ export async function POST(request: NextRequest) {
             { status: 400 }
           )
         }
-        const cancelledReservation = await hostex.cancelReservation(reservationId, data.reason)
+        const cancelledReservation = await hostex.cancelReservation(
+          reservationId,
+          data.reason
+        )
         return NextResponse.json(cancelledReservation)
 
       case 'confirm':
@@ -168,14 +183,12 @@ export async function POST(request: NextRequest) {
             { status: 400 }
           )
         }
-        const confirmedReservation = await hostex.confirmReservation(reservationId)
+        const confirmedReservation =
+          await hostex.confirmReservation(reservationId)
         return NextResponse.json(confirmedReservation)
 
       default:
-        return NextResponse.json(
-          { error: 'Invalid action' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
     }
   } catch (error) {
     console.error('Error processing reservation action:', error)

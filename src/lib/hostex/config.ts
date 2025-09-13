@@ -78,7 +78,12 @@ export interface AuditLog {
 export class AuditLogger {
   private logs: AuditLog[] = []
 
-  log(action: string, details: Record<string, any>, userId?: string, request?: Request): void {
+  log(
+    action: string,
+    details: Record<string, any>,
+    userId?: string,
+    request?: Request
+  ): void {
     const auditLog: AuditLog = {
       id: crypto.randomUUID(),
       timestamp: new Date().toISOString(),
@@ -98,10 +103,17 @@ export class AuditLogger {
 
   private sanitizeDetails(details: Record<string, any>): Record<string, any> {
     const sanitized = { ...details }
-    
+
     // Remove sensitive information
-    const sensitiveKeys = ['password', 'apiKey', 'apiSecret', 'token', 'secret', 'accessToken']
-    sensitiveKeys.forEach(key => {
+    const sensitiveKeys = [
+      'password',
+      'apiKey',
+      'apiSecret',
+      'token',
+      'secret',
+      'accessToken',
+    ]
+    sensitiveKeys.forEach((key) => {
       if (key in sanitized) {
         sanitized[key] = '[REDACTED]'
       }
@@ -112,7 +124,7 @@ export class AuditLogger {
 
   private getClientIP(request?: Request): string | undefined {
     if (!request) return undefined
-    
+
     return (
       request.headers.get('x-forwarded-for') ||
       request.headers.get('x-real-ip') ||
@@ -126,15 +138,11 @@ export class AuditLogger {
   }
 
   getLogsByAction(action: string, limit = 50): AuditLog[] {
-    return this.logs
-      .filter(log => log.action === action)
-      .slice(-limit)
+    return this.logs.filter((log) => log.action === action).slice(-limit)
   }
 
   getLogsByUser(userId: string, limit = 50): AuditLog[] {
-    return this.logs
-      .filter(log => log.userId === userId)
-      .slice(-limit)
+    return this.logs.filter((log) => log.userId === userId).slice(-limit)
   }
 }
 

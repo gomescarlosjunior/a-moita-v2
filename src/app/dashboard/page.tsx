@@ -13,7 +13,7 @@ import {
   CogIcon,
   BellIcon,
   UserCircleIcon,
-  Cog6ToothIcon
+  Cog6ToothIcon,
 } from '@heroicons/react/24/outline'
 import { MetricsWidget } from '@/components/hostex/MetricsWidget'
 import PropertiesWidget from '@/components/hostex/PropertiesWidget'
@@ -21,9 +21,24 @@ import Link from 'next/link'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, current: true },
-  { name: 'Propriedades', href: '/properties', icon: BuildingOfficeIcon, current: false },
-  { name: 'Reservas', href: '/reservations', icon: CalendarIcon, current: false },
-  { name: 'Mensagens', href: '/messaging', icon: ChatBubbleLeftRightIcon, current: false },
+  {
+    name: 'Propriedades',
+    href: '/properties',
+    icon: BuildingOfficeIcon,
+    current: false,
+  },
+  {
+    name: 'Reservas',
+    href: '/reservations',
+    icon: CalendarIcon,
+    current: false,
+  },
+  {
+    name: 'Mensagens',
+    href: '/messaging',
+    icon: ChatBubbleLeftRightIcon,
+    current: false,
+  },
   { name: 'Relatórios', href: '/reports', icon: ChartBarIcon, current: false },
   { name: 'Configurações', href: '/settings', icon: CogIcon, current: false },
 ]
@@ -61,18 +76,20 @@ export default function DashboardPage() {
                     <ul role="list" className="-mx-2 space-y-1">
                       {navigation.map((item) => (
                         <li key={item.name}>
-                          <Link 
+                          <Link
                             href={item.href}
                             className={classNames(
                               item.current
                                 ? 'bg-teal-50 text-teal-600'
-                                : 'text-gray-700 hover:text-teal-600 hover:bg-gray-50',
-                              'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                                : 'text-gray-700 hover:bg-gray-50 hover:text-teal-600',
+                              'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6'
                             )}
                           >
                             <item.icon
                               className={classNames(
-                                item.current ? 'text-teal-600' : 'text-gray-400 group-hover:text-teal-600',
+                                item.current
+                                  ? 'text-teal-600'
+                                  : 'text-gray-400 group-hover:text-teal-600',
                                 'h-6 w-6 shrink-0'
                               )}
                               aria-hidden="true"
@@ -102,18 +119,20 @@ export default function DashboardPage() {
                 <ul role="list" className="-mx-2 space-y-1">
                   {navigation.map((item) => (
                     <li key={item.name}>
-                      <Link 
+                      <Link
                         href={item.href}
                         className={classNames(
                           item.current
                             ? 'bg-teal-50 text-teal-600'
-                            : 'text-gray-700 hover:text-teal-600 hover:bg-gray-50',
-                          'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                            : 'text-gray-700 hover:bg-gray-50 hover:text-teal-600',
+                          'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6'
                         )}
                       >
                         <item.icon
                           className={classNames(
-                            item.current ? 'text-teal-600' : 'text-gray-400 group-hover:text-teal-600',
+                            item.current
+                              ? 'text-teal-600'
+                              : 'text-gray-400 group-hover:text-teal-600',
                             'h-6 w-6 shrink-0'
                           )}
                           aria-hidden="true"
@@ -144,22 +163,36 @@ export default function DashboardPage() {
 
           <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
             <div className="flex flex-1 items-center">
-              <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
+              <h1 className="text-2xl font-semibold text-gray-900">
+                Dashboard
+              </h1>
             </div>
             <div className="flex items-center gap-x-4 lg:gap-x-6">
-              <button type="button" className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500">
+              <button
+                type="button"
+                className="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500"
+              >
                 <span className="sr-only">View notifications</span>
                 <BellIcon className="h-6 w-6" aria-hidden="true" />
               </button>
 
-              <div className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200" aria-hidden="true" />
+              <div
+                className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200"
+                aria-hidden="true"
+              />
 
               <div className="relative">
-                <button type="button" className="-m-1.5 flex items-center p-1.5">
+                <button
+                  type="button"
+                  className="-m-1.5 flex items-center p-1.5"
+                >
                   <span className="sr-only">Open user menu</span>
                   <UserCircleIcon className="h-8 w-8 text-gray-400" />
                   <span className="hidden lg:flex lg:items-center">
-                    <span className="ml-4 text-sm font-semibold leading-6 text-gray-900" aria-hidden="true">
+                    <span
+                      className="ml-4 text-sm font-semibold leading-6 text-gray-900"
+                      aria-hidden="true"
+                    >
                       Max Silva
                     </span>
                   </span>
@@ -177,9 +210,9 @@ export default function DashboardPage() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-gradient-to-r from-teal-500 to-blue-600 rounded-lg p-6 text-white"
+                className="rounded-lg bg-gradient-to-r from-teal-500 to-blue-600 p-6 text-white"
               >
-                <h2 className="text-2xl font-bold mb-2">
+                <h2 className="mb-2 text-2xl font-bold">
                   Bem-vindo de volta, Max! 👋
                 </h2>
                 <p className="text-teal-100">
@@ -194,50 +227,66 @@ export default function DashboardPage() {
               <PropertiesWidget />
 
               {/* Quick Actions */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                 <Link href="/properties" className="block">
-                  <div className="bg-white p-6 rounded-lg border border-gray-200 hover:shadow-md transition-shadow cursor-pointer">
+                  <div className="cursor-pointer rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md">
                     <div className="flex items-center">
                       <BuildingOfficeIcon className="h-8 w-8 text-teal-600" />
                       <div className="ml-4">
-                        <h3 className="text-lg font-semibold text-gray-900">Propriedades</h3>
-                        <p className="text-sm text-gray-600">Gerenciar propriedades</p>
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          Propriedades
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                          Gerenciar propriedades
+                        </p>
                       </div>
                     </div>
                   </div>
                 </Link>
 
                 <Link href="/reservations" className="block">
-                  <div className="bg-white p-6 rounded-lg border border-gray-200 hover:shadow-md transition-shadow cursor-pointer">
+                  <div className="cursor-pointer rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md">
                     <div className="flex items-center">
                       <CalendarIcon className="h-8 w-8 text-blue-600" />
                       <div className="ml-4">
-                        <h3 className="text-lg font-semibold text-gray-900">Reservas</h3>
-                        <p className="text-sm text-gray-600">Ver todas as reservas</p>
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          Reservas
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                          Ver todas as reservas
+                        </p>
                       </div>
                     </div>
                   </div>
                 </Link>
 
                 <Link href="/messaging" className="block">
-                  <div className="bg-white p-6 rounded-lg border border-gray-200 hover:shadow-md transition-shadow cursor-pointer">
+                  <div className="cursor-pointer rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md">
                     <div className="flex items-center">
                       <ChatBubbleLeftRightIcon className="h-8 w-8 text-purple-600" />
                       <div className="ml-4">
-                        <h3 className="text-lg font-semibold text-gray-900">Mensagens</h3>
-                        <p className="text-sm text-gray-600">Comunicação com hóspedes</p>
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          Mensagens
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                          Comunicação com hóspedes
+                        </p>
                       </div>
                     </div>
                   </div>
                 </Link>
 
                 <Link href="/integration-test" className="block">
-                  <div className="bg-white p-6 rounded-lg border border-gray-200 hover:shadow-md transition-shadow cursor-pointer">
+                  <div className="cursor-pointer rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-md">
                     <div className="flex items-center">
                       <Cog6ToothIcon className="h-8 w-8 text-gray-600" />
                       <div className="ml-4">
-                        <h3 className="text-lg font-semibold text-gray-900">Testes</h3>
-                        <p className="text-sm text-gray-600">Testar integração</p>
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          Testes
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                          Testar integração
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -249,38 +298,44 @@ export default function DashboardPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="bg-white rounded-lg border border-gray-200 p-6"
+                className="rounded-lg border border-gray-200 bg-white p-6"
               >
-                <div className="flex items-center justify-between mb-4">
+                <div className="mb-4 flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-gray-900">
                     Status da Integração
                   </h3>
-                  <Link 
+                  <Link
                     href="/integration-test"
-                    className="text-sm text-teal-600 hover:text-teal-700 font-medium"
+                    className="text-sm font-medium text-teal-600 hover:text-teal-700"
                   >
                     Executar Testes →
                   </Link>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
-                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                  <div className="flex items-center space-x-3 rounded-lg bg-green-50 p-3">
+                    <div className="h-3 w-3 rounded-full bg-green-500"></div>
                     <div>
-                      <p className="text-sm font-medium text-green-800">Hostex API</p>
+                      <p className="text-sm font-medium text-green-800">
+                        Hostex API
+                      </p>
                       <p className="text-xs text-green-600">Conectado</p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
-                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <div className="flex items-center space-x-3 rounded-lg bg-green-50 p-3">
+                    <div className="h-3 w-3 rounded-full bg-green-500"></div>
                     <div>
-                      <p className="text-sm font-medium text-green-800">Sincronização</p>
+                      <p className="text-sm font-medium text-green-800">
+                        Sincronização
+                      </p>
                       <p className="text-xs text-green-600">Ativa</p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
-                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <div className="flex items-center space-x-3 rounded-lg bg-green-50 p-3">
+                    <div className="h-3 w-3 rounded-full bg-green-500"></div>
                     <div>
-                      <p className="text-sm font-medium text-green-800">Webhooks</p>
+                      <p className="text-sm font-medium text-green-800">
+                        Webhooks
+                      </p>
                       <p className="text-xs text-green-600">Funcionando</p>
                     </div>
                   </div>

@@ -79,10 +79,10 @@ export class HostexClient {
 
   constructor(credentials: HostexCredentials) {
     this.credentials = HostexCredentialsSchema.parse(credentials)
-    
+
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'Hostex-Access-Token': this.credentials.accessToken,
     }
     if (this.credentials.apiSecret) {
@@ -102,7 +102,9 @@ export class HostexClient {
     // Request interceptor for logging
     this.client.interceptors.request.use(
       (config) => {
-        console.log(`[Hostex API] ${config.method?.toUpperCase()} ${config.url}`)
+        console.log(
+          `[Hostex API] ${config.method?.toUpperCase()} ${config.url}`
+        )
         return config
       },
       (error) => {
@@ -123,7 +125,7 @@ export class HostexClient {
         const errors = error.response?.data?.errors
 
         console.error('[Hostex API] Error:', { message, statusCode, errors })
-        
+
         throw new HostexApiError(message, statusCode, errors)
       }
     )
@@ -131,91 +133,156 @@ export class HostexClient {
 
   // Properties Management
   async getProperties(): Promise<Property[]> {
-    const response = await this.client.get<HostexApiResponse<Property[]>>('/properties')
+    const response =
+      await this.client.get<HostexApiResponse<Property[]>>('/properties')
     return response.data.data
   }
 
   async getProperty(id: string): Promise<Property> {
-    const response = await this.client.get<HostexApiResponse<Property>>(`/properties/${id}`)
+    const response = await this.client.get<HostexApiResponse<Property>>(
+      `/properties/${id}`
+    )
     return response.data.data
   }
 
-  async createProperty(property: Omit<Property, 'id' | 'createdAt' | 'updatedAt'>): Promise<Property> {
-    const response = await this.client.post<HostexApiResponse<Property>>('/properties', property)
+  async createProperty(
+    property: Omit<Property, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<Property> {
+    const response = await this.client.post<HostexApiResponse<Property>>(
+      '/properties',
+      property
+    )
     return response.data.data
   }
 
-  async updateProperty(id: string, updates: Partial<Property>): Promise<Property> {
-    const response = await this.client.put<HostexApiResponse<Property>>(`/properties/${id}`, updates)
+  async updateProperty(
+    id: string,
+    updates: Partial<Property>
+  ): Promise<Property> {
+    const response = await this.client.put<HostexApiResponse<Property>>(
+      `/properties/${id}`,
+      updates
+    )
     return response.data.data
   }
 
   // Reservations Management
   async getReservations(propertyId?: string): Promise<Reservation[]> {
     const params = propertyId ? { propertyId } : {}
-    const response = await this.client.get<HostexApiResponse<Reservation[]>>('/reservations', { params })
+    const response = await this.client.get<HostexApiResponse<Reservation[]>>(
+      '/reservations',
+      { params }
+    )
     return response.data.data
   }
 
   async getReservation(id: string): Promise<Reservation> {
-    const response = await this.client.get<HostexApiResponse<Reservation>>(`/reservations/${id}`)
+    const response = await this.client.get<HostexApiResponse<Reservation>>(
+      `/reservations/${id}`
+    )
     return response.data.data
   }
 
-  async createReservation(reservation: Omit<Reservation, 'id' | 'createdAt' | 'updatedAt'>): Promise<Reservation> {
-    const response = await this.client.post<HostexApiResponse<Reservation>>('/reservations', reservation)
+  async createReservation(
+    reservation: Omit<Reservation, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<Reservation> {
+    const response = await this.client.post<HostexApiResponse<Reservation>>(
+      '/reservations',
+      reservation
+    )
     return response.data.data
   }
 
-  async updateReservation(id: string, updates: Partial<Reservation>): Promise<Reservation> {
-    const response = await this.client.put<HostexApiResponse<Reservation>>(`/reservations/${id}`, updates)
+  async updateReservation(
+    id: string,
+    updates: Partial<Reservation>
+  ): Promise<Reservation> {
+    const response = await this.client.put<HostexApiResponse<Reservation>>(
+      `/reservations/${id}`,
+      updates
+    )
     return response.data.data
   }
 
   async cancelReservation(id: string, reason?: string): Promise<Reservation> {
-    const response = await this.client.post<HostexApiResponse<Reservation>>(`/reservations/${id}/cancel`, { reason })
+    const response = await this.client.post<HostexApiResponse<Reservation>>(
+      `/reservations/${id}/cancel`,
+      { reason }
+    )
     return response.data.data
   }
 
   // Availability Management
-  async getAvailability(propertyId: string, startDate: string, endDate: string): Promise<Availability[]> {
-    const response = await this.client.get<HostexApiResponse<Availability[]>>('/availability', {
-      params: { propertyId, startDate, endDate }
-    })
+  async getAvailability(
+    propertyId: string,
+    startDate: string,
+    endDate: string
+  ): Promise<Availability[]> {
+    const response = await this.client.get<HostexApiResponse<Availability[]>>(
+      '/availability',
+      {
+        params: { propertyId, startDate, endDate },
+      }
+    )
     return response.data.data
   }
 
-  async updateAvailability(propertyId: string, availability: Omit<Availability, 'propertyId'>[]): Promise<void> {
+  async updateAvailability(
+    propertyId: string,
+    availability: Omit<Availability, 'propertyId'>[]
+  ): Promise<void> {
     await this.client.post('/availability', {
       propertyId,
-      availability
+      availability,
     })
   }
 
   // Channel Management
-  async getChannels(): Promise<{ id: string; name: string; type: string; status: string }[]> {
-    const response = await this.client.get<HostexApiResponse<any[]>>('/channels')
+  async getChannels(): Promise<
+    { id: string; name: string; type: string; status: string }[]
+  > {
+    const response =
+      await this.client.get<HostexApiResponse<any[]>>('/channels')
     return response.data.data
   }
 
-  async connectChannel(propertyId: string, channelId: string, credentials: Record<string, any>): Promise<void> {
-    await this.client.post(`/properties/${propertyId}/channels/${channelId}/connect`, credentials)
+  async connectChannel(
+    propertyId: string,
+    channelId: string,
+    credentials: Record<string, any>
+  ): Promise<void> {
+    await this.client.post(
+      `/properties/${propertyId}/channels/${channelId}/connect`,
+      credentials
+    )
   }
 
-  async disconnectChannel(propertyId: string, channelId: string): Promise<void> {
-    await this.client.post(`/properties/${propertyId}/channels/${channelId}/disconnect`)
+  async disconnectChannel(
+    propertyId: string,
+    channelId: string
+  ): Promise<void> {
+    await this.client.post(
+      `/properties/${propertyId}/channels/${channelId}/disconnect`
+    )
   }
 
   // Messaging
-  async sendMessage(reservationId: string, message: string, template?: string): Promise<void> {
+  async sendMessage(
+    reservationId: string,
+    message: string,
+    template?: string
+  ): Promise<void> {
     await this.client.post(`/reservations/${reservationId}/messages`, {
       message,
-      template
+      template,
     })
   }
 
-  async getMessageTemplates(): Promise<{ id: string; name: string; content: string; trigger: string }[]> {
-    const response = await this.client.get<HostexApiResponse<any[]>>('/message-templates')
+  async getMessageTemplates(): Promise<
+    { id: string; name: string; content: string; trigger: string }[]
+  > {
+    const response =
+      await this.client.get<HostexApiResponse<any[]>>('/message-templates')
     return response.data.data
   }
 

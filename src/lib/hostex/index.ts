@@ -1,6 +1,14 @@
 import { HostexClient } from './client'
-import { PropertyManager, PropertyWithChannels, SyncResult } from './property-manager'
-import { CalendarSyncManager, CalendarSyncResult, SyncConflict } from './calendar-sync'
+import {
+  PropertyManager,
+  PropertyWithChannels,
+  SyncResult,
+} from './property-manager'
+import {
+  CalendarSyncManager,
+  CalendarSyncResult,
+  SyncConflict,
+} from './calendar-sync'
 import { MessagingManager, Message, MessageTemplate } from './messaging'
 import { getHostexConfig, auditLogger, validateHostexConfig } from './config'
 
@@ -48,12 +56,12 @@ export class HostexIntegration {
       this.isInitialized = true
 
       auditLogger.log('HOSTEX_INTEGRATION_INITIALIZED', {
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       })
     } catch (error) {
       console.error('Failed to initialize Hostex integration:', error)
       auditLogger.log('HOSTEX_INTEGRATION_ERROR', {
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       })
     }
   }
@@ -64,7 +72,7 @@ export class HostexIntegration {
       return {
         isConfigured: false,
         isConnected: false,
-        error: 'Integration not initialized'
+        error: 'Integration not initialized',
       }
     }
 
@@ -73,14 +81,14 @@ export class HostexIntegration {
       return {
         isConfigured: true,
         isConnected,
-        lastHealthCheck: new Date().toISOString()
+        lastHealthCheck: new Date().toISOString(),
       }
     } catch (error) {
       return {
         isConfigured: true,
         isConnected: false,
         lastHealthCheck: new Date().toISOString(),
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       }
     }
   }
@@ -98,16 +106,17 @@ export class HostexIntegration {
 
   async syncProperty(propertyId: string): Promise<SyncResult> {
     this.ensureInitialized()
-    
+
     // Sync property data
     const propertyResult = await this.propertyManager!.syncProperty(propertyId)
-    
+
     // Sync calendar
-    const calendarResult = await this.calendarSync!.syncPropertyCalendar(propertyId)
-    
+    const calendarResult =
+      await this.calendarSync!.syncPropertyCalendar(propertyId)
+
     return {
       ...propertyResult,
-      conflictsDetected: calendarResult.conflictsDetected
+      conflictsDetected: calendarResult.conflictsDetected,
     }
   }
 
@@ -117,28 +126,40 @@ export class HostexIntegration {
   }
 
   async connectChannel(
-    propertyId: string, 
-    channelId: string, 
+    propertyId: string,
+    channelId: string,
     credentials: Record<string, any>,
     userId?: string
   ): Promise<void> {
     this.ensureInitialized()
-    await this.propertyManager!.connectChannel(propertyId, channelId, credentials, userId)
+    await this.propertyManager!.connectChannel(
+      propertyId,
+      channelId,
+      credentials,
+      userId
+    )
   }
 
-  async disconnectChannel(propertyId: string, channelId: string, userId?: string): Promise<void> {
+  async disconnectChannel(
+    propertyId: string,
+    channelId: string,
+    userId?: string
+  ): Promise<void> {
     this.ensureInitialized()
     await this.propertyManager!.disconnectChannel(propertyId, channelId, userId)
   }
 
   // Calendar and Availability
-  async getCalendarEvents(propertyId: string, dateRange?: { start: string; end: string }) {
+  async getCalendarEvents(
+    propertyId: string,
+    dateRange?: { start: string; end: string }
+  ) {
     this.ensureInitialized()
     return this.calendarSync!.getCalendarEvents(propertyId, dateRange)
   }
 
   async updateAvailability(
-    propertyId: string, 
+    propertyId: string,
     dates: { date: string; available: boolean; price?: number }[]
   ): Promise<void> {
     this.ensureInitialized()
@@ -150,20 +171,23 @@ export class HostexIntegration {
     if (propertyId) {
       return this.calendarSync!.getConflicts(propertyId)
     }
-    
+
     // Get conflicts for all properties
     const properties = await this.getProperties()
     const allConflicts: SyncConflict[] = []
-    
+
     for (const property of properties) {
       const conflicts = this.calendarSync!.getConflicts(property.id)
       allConflicts.push(...conflicts)
     }
-    
+
     return allConflicts
   }
 
-  async startRealTimeSync(propertyId: string, intervalMs?: number): Promise<void> {
+  async startRealTimeSync(
+    propertyId: string,
+    intervalMs?: number
+  ): Promise<void> {
     this.ensureInitialized()
     this.calendarSync!.startRealTimeSync(propertyId, intervalMs)
   }
@@ -190,27 +214,43 @@ export class HostexIntegration {
     channel: Message['channel'] = 'email'
   ): Promise<Message> {
     this.ensureInitialized()
-    return await this.messaging!.sendManualMessage(reservationId, content, channel)
+    return await this.messaging!.sendManualMessage(
+      reservationId,
+      content,
+      channel
+    )
   }
 
   // Dashboard Metrics
   async getDashboardMetrics(): Promise<DashboardMetrics> {
     this.ensureInitialized()
-    
+
     const properties = await this.getProperties()
     const conflicts = await this.getConflicts()
-    
-    const totalRevenue = properties.reduce((sum, prop) => sum + prop.metrics.revenue, 0)
-    const averageOccupancy = properties.length > 0 
-      ? properties.reduce((sum, prop) => sum + prop.metrics.occupancyRate, 0) / properties.length 
-      : 0
-    const totalReservations = properties.reduce((sum, prop) => sum + prop.metrics.totalReservations, 0)
+
+    const totalRevenue = properties.reduce(
+      (sum, prop) => sum + prop.metrics.revenue,
+      0
+    )
+    const averageOccupancy =
+      properties.length > 0
+        ? properties.reduce(
+            (sum, prop) => sum + prop.metrics.occupancyRate,
+            0
+          ) / properties.length
+        : 0
+    const totalReservations = properties.reduce(
+      (sum, prop) => sum + prop.metrics.totalReservations,
+      0
+    )
     const connectedChannels = new Set(
-      properties.flatMap(p => p.connectedChannels.map(c => c.id))
+      properties.flatMap((p) => p.connectedChannels.map((c) => c.id))
     ).size
-    const activeProperties = properties.filter(p => p.status === 'active').length
-    const pendingConflicts = conflicts.filter(c => !c.resolution).length
-    
+    const activeProperties = properties.filter(
+      (p) => p.status === 'active'
+    ).length
+    const pendingConflicts = conflicts.filter((c) => !c.resolution).length
+
     return {
       totalRevenue,
       averageOccupancy,
@@ -218,23 +258,26 @@ export class HostexIntegration {
       connectedChannels,
       activeProperties,
       pendingConflicts,
-      lastSync: new Date().toISOString()
+      lastSync: new Date().toISOString(),
     }
   }
 
   // Event Handlers for Webhooks
   async handleReservationCreated(reservationData: any): Promise<void> {
     this.ensureInitialized()
-    
+
     try {
       auditLogger.log('RESERVATION_CREATED', {
         reservationId: reservationData.id,
-        propertyId: reservationData.propertyId
+        propertyId: reservationData.propertyId,
       })
 
       // Process automated messages
-      await this.messaging!.processReservationEvent('booking_confirmed', reservationData)
-      
+      await this.messaging!.processReservationEvent(
+        'booking_confirmed',
+        reservationData
+      )
+
       // Sync calendar to prevent overbooking
       await this.calendarSync!.syncPropertyCalendar(reservationData.propertyId)
     } catch (error) {
@@ -244,11 +287,11 @@ export class HostexIntegration {
 
   async handleReservationUpdated(reservationData: any): Promise<void> {
     this.ensureInitialized()
-    
+
     try {
       auditLogger.log('RESERVATION_UPDATED', {
         reservationId: reservationData.id,
-        propertyId: reservationData.propertyId
+        propertyId: reservationData.propertyId,
       })
 
       // Sync calendar
@@ -260,16 +303,19 @@ export class HostexIntegration {
 
   async handleReservationCancelled(reservationData: any): Promise<void> {
     this.ensureInitialized()
-    
+
     try {
       auditLogger.log('RESERVATION_CANCELLED', {
         reservationId: reservationData.id,
-        propertyId: reservationData.propertyId
+        propertyId: reservationData.propertyId,
       })
 
       // Process cancellation messages
-      await this.messaging!.processReservationEvent('cancellation', reservationData)
-      
+      await this.messaging!.processReservationEvent(
+        'cancellation',
+        reservationData
+      )
+
       // Sync calendar to update availability
       await this.calendarSync!.syncPropertyCalendar(reservationData.propertyId)
     } catch (error) {
@@ -279,7 +325,13 @@ export class HostexIntegration {
 
   // Utility Methods
   private ensureInitialized(): void {
-    if (!this.isInitialized || !this.client || !this.propertyManager || !this.calendarSync || !this.messaging) {
+    if (
+      !this.isInitialized ||
+      !this.client ||
+      !this.propertyManager ||
+      !this.calendarSync ||
+      !this.messaging
+    ) {
       throw new Error('Hostex integration is not properly initialized')
     }
   }
@@ -288,9 +340,9 @@ export class HostexIntegration {
     if (this.calendarSync) {
       this.calendarSync.stopAllRealTimeSync()
     }
-    
+
     auditLogger.log('HOSTEX_INTEGRATION_CLEANUP', {
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     })
   }
 }

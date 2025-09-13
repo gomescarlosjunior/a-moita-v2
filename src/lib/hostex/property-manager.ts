@@ -46,14 +46,14 @@ export class PropertyManager {
   async loadProperties(): Promise<PropertyWithChannels[]> {
     try {
       auditLogger.log('LOAD_PROPERTIES', { action: 'start' })
-      
+
       const properties = await this.client.getProperties()
       const propertiesWithChannels: PropertyWithChannels[] = []
 
       for (const property of properties) {
         const channels = await this.getPropertyChannels(property.id)
         const metrics = await this.calculatePropertyMetrics(property.id)
-        
+
         const propertyWithChannels: PropertyWithChannels = {
           ...property,
           connectedChannels: channels,
@@ -65,16 +65,16 @@ export class PropertyManager {
         propertiesWithChannels.push(propertyWithChannels)
       }
 
-      auditLogger.log('LOAD_PROPERTIES', { 
-        action: 'complete', 
-        count: propertiesWithChannels.length 
+      auditLogger.log('LOAD_PROPERTIES', {
+        action: 'complete',
+        count: propertiesWithChannels.length,
       })
 
       return propertiesWithChannels
     } catch (error) {
-      auditLogger.log('LOAD_PROPERTIES', { 
-        action: 'error', 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+      auditLogger.log('LOAD_PROPERTIES', {
+        action: 'error',
+        error: error instanceof Error ? error.message : 'Unknown error',
       })
       throw error
     }
@@ -104,15 +104,17 @@ export class PropertyManager {
     }
   }
 
-  async createProperty(propertyData: Omit<Property, 'id' | 'createdAt' | 'updatedAt'>): Promise<PropertyWithChannels> {
+  async createProperty(
+    propertyData: Omit<Property, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<PropertyWithChannels> {
     try {
-      auditLogger.log('CREATE_PROPERTY', { 
-        action: 'start', 
-        propertyName: propertyData.name 
+      auditLogger.log('CREATE_PROPERTY', {
+        action: 'start',
+        propertyName: propertyData.name,
       })
 
       const property = await this.client.createProperty(propertyData)
-      
+
       const propertyWithChannels: PropertyWithChannels = {
         ...property,
         connectedChannels: [],
@@ -127,16 +129,16 @@ export class PropertyManager {
 
       this.properties.set(property.id, propertyWithChannels)
 
-      auditLogger.log('CREATE_PROPERTY', { 
-        action: 'complete', 
-        propertyId: property.id 
+      auditLogger.log('CREATE_PROPERTY', {
+        action: 'complete',
+        propertyId: property.id,
       })
 
       return propertyWithChannels
     } catch (error) {
-      auditLogger.log('CREATE_PROPERTY', { 
-        action: 'error', 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+      auditLogger.log('CREATE_PROPERTY', {
+        action: 'error',
+        error: error instanceof Error ? error.message : 'Unknown error',
       })
       throw error
     }
@@ -146,7 +148,7 @@ export class PropertyManager {
   async getAvailableChannels(): Promise<Channel[]> {
     try {
       const channels = await this.client.getChannels()
-      return channels.map(channel => ({
+      return channels.map((channel) => ({
         id: channel.id,
         name: channel.name,
         type: this.mapChannelType(channel.type),
@@ -159,20 +161,24 @@ export class PropertyManager {
   }
 
   async connectChannel(
-    propertyId: string, 
-    channelId: string, 
+    propertyId: string,
+    channelId: string,
     credentials: Record<string, any>,
     userId?: string
   ): Promise<void> {
     try {
-      auditLogger.log('CONNECT_CHANNEL', { 
-        action: 'start', 
-        propertyId, 
-        channelId 
-      }, userId)
+      auditLogger.log(
+        'CONNECT_CHANNEL',
+        {
+          action: 'start',
+          propertyId,
+          channelId,
+        },
+        userId
+      )
 
       await this.client.connectChannel(propertyId, channelId, credentials)
-      
+
       // Update local cache
       const property = this.properties.get(propertyId)
       if (property) {
@@ -181,56 +187,80 @@ export class PropertyManager {
         this.properties.set(propertyId, property)
       }
 
-      auditLogger.log('CONNECT_CHANNEL', { 
-        action: 'complete', 
-        propertyId, 
-        channelId 
-      }, userId)
+      auditLogger.log(
+        'CONNECT_CHANNEL',
+        {
+          action: 'complete',
+          propertyId,
+          channelId,
+        },
+        userId
+      )
 
       // Trigger initial sync
       await this.syncProperty(propertyId)
     } catch (error) {
-      auditLogger.log('CONNECT_CHANNEL', { 
-        action: 'error', 
-        propertyId, 
-        channelId,
-        error: error instanceof Error ? error.message : 'Unknown error' 
-      }, userId)
+      auditLogger.log(
+        'CONNECT_CHANNEL',
+        {
+          action: 'error',
+          propertyId,
+          channelId,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        },
+        userId
+      )
       throw error
     }
   }
 
-  async disconnectChannel(propertyId: string, channelId: string, userId?: string): Promise<void> {
+  async disconnectChannel(
+    propertyId: string,
+    channelId: string,
+    userId?: string
+  ): Promise<void> {
     try {
-      auditLogger.log('DISCONNECT_CHANNEL', { 
-        action: 'start', 
-        propertyId, 
-        channelId 
-      }, userId)
+      auditLogger.log(
+        'DISCONNECT_CHANNEL',
+        {
+          action: 'start',
+          propertyId,
+          channelId,
+        },
+        userId
+      )
 
       await this.client.disconnectChannel(propertyId, channelId)
-      
+
       // Update local cache
       const property = this.properties.get(propertyId)
       if (property) {
         property.connectedChannels = property.connectedChannels.filter(
-          channel => channel.id !== channelId
+          (channel) => channel.id !== channelId
         )
         this.properties.set(propertyId, property)
       }
 
-      auditLogger.log('DISCONNECT_CHANNEL', { 
-        action: 'complete', 
-        propertyId, 
-        channelId 
-      }, userId)
+      auditLogger.log(
+        'DISCONNECT_CHANNEL',
+        {
+          action: 'complete',
+          propertyId,
+          channelId,
+        },
+        userId
+      )
     } catch (error) {
-      auditLogger.log('DISCONNECT_CHANNEL', { 
-        action: 'error', 
-        propertyId, 
-        channelId,
-        error: error instanceof Error ? error.message : 'Unknown error' 
-      }, userId)
+      auditLogger.log(
+        'DISCONNECT_CHANNEL',
+        {
+          action: 'error',
+          propertyId,
+          channelId,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        },
+        userId
+      )
       throw error
     }
   }
@@ -242,11 +272,11 @@ export class PropertyManager {
     }
 
     this.syncInProgress.add(propertyId)
-    
+
     try {
-      auditLogger.log('SYNC_PROPERTY', { 
-        action: 'start', 
-        propertyId 
+      auditLogger.log('SYNC_PROPERTY', {
+        action: 'start',
+        propertyId,
       })
 
       // Update sync status
@@ -275,10 +305,10 @@ export class PropertyManager {
         this.properties.set(propertyId, property)
       }
 
-      auditLogger.log('SYNC_PROPERTY', { 
-        action: 'complete', 
+      auditLogger.log('SYNC_PROPERTY', {
+        action: 'complete',
         propertyId,
-        result: syncResult 
+        result: syncResult,
       })
 
       return syncResult
@@ -298,10 +328,10 @@ export class PropertyManager {
         errors: [error instanceof Error ? error.message : 'Unknown error'],
       }
 
-      auditLogger.log('SYNC_PROPERTY', { 
-        action: 'error', 
+      auditLogger.log('SYNC_PROPERTY', {
+        action: 'error',
         propertyId,
-        error: error instanceof Error ? error.message : 'Unknown error' 
+        error: error instanceof Error ? error.message : 'Unknown error',
       })
 
       return syncResult
@@ -314,9 +344,9 @@ export class PropertyManager {
     const properties = Array.from(this.properties.keys())
     const results: SyncResult[] = []
 
-    auditLogger.log('SYNC_ALL_PROPERTIES', { 
-      action: 'start', 
-      propertyCount: properties.length 
+    auditLogger.log('SYNC_ALL_PROPERTIES', {
+      action: 'start',
+      propertyCount: properties.length,
     })
 
     for (const propertyId of properties) {
@@ -335,9 +365,12 @@ export class PropertyManager {
       }
     }
 
-    auditLogger.log('SYNC_ALL_PROPERTIES', { 
-      action: 'complete', 
-      results: results.map(r => ({ propertyId: r.propertyId, success: r.success }))
+    auditLogger.log('SYNC_ALL_PROPERTIES', {
+      action: 'complete',
+      results: results.map((r) => ({
+        propertyId: r.propertyId,
+        success: r.success,
+      })),
     })
 
     return results
@@ -349,8 +382,8 @@ export class PropertyManager {
       // This would typically come from the API
       // For now, we'll return mock data based on the property's channels array
       const property = await this.client.getProperty(propertyId)
-      
-      return property.channels.map(channelId => ({
+
+      return property.channels.map((channelId) => ({
         id: channelId,
         name: this.getChannelName(channelId),
         type: this.mapChannelType(channelId),
@@ -363,29 +396,36 @@ export class PropertyManager {
     }
   }
 
-  private async calculatePropertyMetrics(propertyId: string): Promise<PropertyWithChannels['metrics']> {
+  private async calculatePropertyMetrics(
+    propertyId: string
+  ): Promise<PropertyWithChannels['metrics']> {
     try {
       const reservations = await this.client.getReservations(propertyId)
       const currentDate = new Date()
       const thirtyDaysAgo = addDays(currentDate, -30)
 
-      const recentReservations = reservations.filter(r => 
-        parseISO(r.createdAt) >= thirtyDaysAgo
+      const recentReservations = reservations.filter(
+        (r) => parseISO(r.createdAt) >= thirtyDaysAgo
       )
 
-      const confirmedReservations = recentReservations.filter(r => 
-        r.status === 'confirmed' || r.status === 'completed'
+      const confirmedReservations = recentReservations.filter(
+        (r) => r.status === 'confirmed' || r.status === 'completed'
       )
 
-      const totalRevenue = confirmedReservations.reduce((sum, r) => sum + r.totalAmount, 0)
-      const averageRate = confirmedReservations.length > 0 
-        ? totalRevenue / confirmedReservations.length 
-        : 0
+      const totalRevenue = confirmedReservations.reduce(
+        (sum, r) => sum + r.totalAmount,
+        0
+      )
+      const averageRate =
+        confirmedReservations.length > 0
+          ? totalRevenue / confirmedReservations.length
+          : 0
 
       // Calculate occupancy rate (simplified)
-      const occupancyRate = confirmedReservations.length > 0 
-        ? Math.min((confirmedReservations.length / 30) * 100, 100)
-        : 0
+      const occupancyRate =
+        confirmedReservations.length > 0
+          ? Math.min((confirmedReservations.length / 30) * 100, 100)
+          : 0
 
       return {
         totalReservations: reservations.length,
@@ -394,7 +434,10 @@ export class PropertyManager {
         revenue: Math.round(totalRevenue * 100) / 100,
       }
     } catch (error) {
-      console.error(`Error calculating metrics for property ${propertyId}:`, error)
+      console.error(
+        `Error calculating metrics for property ${propertyId}:`,
+        error
+      )
       return {
         totalReservations: 0,
         occupancyRate: 0,
@@ -406,20 +449,20 @@ export class PropertyManager {
 
   private getChannelName(channelId: string): string {
     const channelNames: Record<string, string> = {
-      'airbnb': 'Airbnb',
-      'booking': 'Booking.com',
-      'vrbo': 'VRBO',
-      'direct': 'Reserva Direta',
+      airbnb: 'Airbnb',
+      booking: 'Booking.com',
+      vrbo: 'VRBO',
+      direct: 'Reserva Direta',
     }
     return channelNames[channelId] || channelId
   }
 
   private mapChannelType(type: string): Channel['type'] {
     const typeMap: Record<string, Channel['type']> = {
-      'airbnb': 'airbnb',
-      'booking': 'booking',
-      'vrbo': 'vrbo',
-      'direct': 'direct',
+      airbnb: 'airbnb',
+      booking: 'booking',
+      vrbo: 'vrbo',
+      direct: 'direct',
     }
     return typeMap[type.toLowerCase()] || 'other'
   }

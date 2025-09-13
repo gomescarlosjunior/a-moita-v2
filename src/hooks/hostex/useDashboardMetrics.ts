@@ -28,17 +28,20 @@ export function useDashboardMetrics(): UseDashboardMetricsReturn {
     try {
       setLoading(true)
       setError(null)
-      
+
       const response = await fetch('/api/hostex/dashboard')
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.details || `HTTP ${response.status}: ${response.statusText}`)
+        throw new Error(
+          errorData.details || `HTTP ${response.status}: ${response.statusText}`
+        )
       }
-      
+
       const data = await response.json()
       setMetrics(data)
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao carregar métricas'
+      const errorMessage =
+        err instanceof Error ? err.message : 'Erro ao carregar métricas'
       setError(errorMessage)
       console.error('Error fetching dashboard metrics:', err)
     } finally {
@@ -57,11 +60,14 @@ export function useDashboardMetrics(): UseDashboardMetricsReturn {
 
   // Auto-refresh every 2 minutes for real-time metrics
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (!loading) {
-        refreshMetrics()
-      }
-    }, 2 * 60 * 1000) // 2 minutes
+    const interval = setInterval(
+      () => {
+        if (!loading) {
+          refreshMetrics()
+        }
+      },
+      2 * 60 * 1000
+    ) // 2 minutes
 
     return () => clearInterval(interval)
   }, [loading, refreshMetrics])
@@ -70,6 +76,6 @@ export function useDashboardMetrics(): UseDashboardMetricsReturn {
     metrics,
     loading,
     error,
-    refreshMetrics
+    refreshMetrics,
   }
 }

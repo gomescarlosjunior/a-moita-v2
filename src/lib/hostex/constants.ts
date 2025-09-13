@@ -13,8 +13,16 @@ export const HOSTEX_WIDGET_ID =
 
 // Map of property listings managed in Hostex
 // Add new properties here as we expand
-export const HOSTEX_LISTINGS: Record<HostexPropertyKey, { listingId: string; slug: string; title: string; resultUrl: string }> = {
-  origem: { listingId: '113010', slug: 'chaleAOrigem', title: 'Chalé A Origem', resultUrl: '/chaleAOrigem' },
+export const HOSTEX_LISTINGS: Record<
+  HostexPropertyKey,
+  { listingId: string; slug: string; title: string; resultUrl: string }
+> = {
+  origem: {
+    listingId: '113010',
+    slug: 'chaleAOrigem',
+    title: 'Chalé A Origem',
+    resultUrl: '/chaleAOrigem',
+  },
 }
 
 // Helper to resolve a listing by key, throws if missing to avoid silent bugs
@@ -35,6 +43,6 @@ export function buildBookingUrl(listingKey: HostexPropertyKey) {
 // Get all result URLs for search-result-widget configuration
 export function getAllResultUrls(): string {
   return Object.values(HOSTEX_LISTINGS)
-    .map(listing => listing.resultUrl)
+    .map((listing) => listing.resultUrl)
     .join(',')
 }

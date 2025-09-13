@@ -51,35 +51,46 @@ export class CalendarSyncManager {
   }
 
   // Main sync methods
-  async syncPropertyCalendar(propertyId: string, dateRange?: { start: string; end: string }): Promise<CalendarSyncResult> {
+  async syncPropertyCalendar(
+    propertyId: string,
+    dateRange?: { start: string; end: string }
+  ): Promise<CalendarSyncResult> {
     try {
-      auditLogger.log('SYNC_CALENDAR', { 
-        action: 'start', 
-        propertyId, 
-        dateRange 
+      auditLogger.log('SYNC_CALENDAR', {
+        action: 'start',
+        propertyId,
+        dateRange,
       })
 
       const startDate = dateRange?.start || format(new Date(), 'yyyy-MM-dd')
-      const endDate = dateRange?.end || format(addDays(new Date(), 365), 'yyyy-MM-dd')
+      const endDate =
+        dateRange?.end || format(addDays(new Date(), 365), 'yyyy-MM-dd')
 
       // Fetch current availability and reservations
       const [availability, reservations] = await Promise.all([
         this.client.getAvailability(propertyId, startDate, endDate),
-        this.client.getReservations(propertyId)
+        this.client.getReservations(propertyId),
       ])
 
       // Convert to calendar events
-      const events = this.convertToCalendarEvents(propertyId, availability, reservations)
-      
+      const events = this.convertToCalendarEvents(
+        propertyId,
+        availability,
+        reservations
+      )
+
       // Detect conflicts
       const conflicts = this.detectConflicts(propertyId, events)
-      
+
       // Store in cache
       this.calendars.set(propertyId, events)
       this.conflicts.set(propertyId, conflicts)
 
       // Auto-resolve conflicts where possible
-      const resolvedConflicts = await this.autoResolveConflicts(propertyId, conflicts)
+      const resolvedConflicts = await this.autoResolveConflicts(
+        propertyId,
+        conflicts
+      )
 
       const result: CalendarSyncResult = {
         success: true,
@@ -90,14 +101,14 @@ export class CalendarSyncManager {
         lastSync: new Date().toISOString(),
       }
 
-      auditLogger.log('SYNC_CALENDAR', { 
-        action: 'complete', 
+      auditLogger.log('SYNC_CALENDAR', {
+        action: 'complete',
         propertyId,
         result: {
           eventsUpdated: result.eventsUpdated,
           conflictsCount: conflicts.length,
-          resolvedConflicts: resolvedConflicts.length
-        }
+          resolvedConflicts: resolvedConflicts.length,
+        },
       })
 
       return result
@@ -111,10 +122,10 @@ export class CalendarSyncManager {
         lastSync: new Date().toISOString(),
       }
 
-      auditLogger.log('SYNC_CALENDAR', { 
-        action: 'error', 
+      auditLogger.log('SYNC_CALENDAR', {
+        action: 'error',
         propertyId,
-        error: error instanceof Error ? error.message : 'Unknown error' 
+        error: error instanceof Error ? error.message : 'Unknown error',
       })
 
       return result
@@ -122,46 +133,49 @@ export class CalendarSyncManager {
   }
 
   async updateAvailability(
-    propertyId: string, 
+    propertyId: string,
     dates: { date: string; available: boolean; price?: number }[]
   ): Promise<void> {
     try {
-      auditLogger.log('UPDATE_AVAILABILITY', { 
-        action: 'start', 
-        propertyId, 
-        datesCount: dates.length 
+      auditLogger.log('UPDATE_AVAILABILITY', {
+        action: 'start',
+        propertyId,
+        datesCount: dates.length,
       })
 
-      const availability: Omit<Availability, 'propertyId'>[] = dates.map(d => ({
-        date: d.date,
-        available: d.available,
-        price: d.price || 0,
-        minStay: 1,
-        currency: 'BRL',
-      }))
+      const availability: Omit<Availability, 'propertyId'>[] = dates.map(
+        (d) => ({
+          date: d.date,
+          available: d.available,
+          price: d.price || 0,
+          minStay: 1,
+          currency: 'BRL',
+        })
+      )
 
       await this.client.updateAvailability(propertyId, availability)
 
       // Update local cache
       await this.syncPropertyCalendar(propertyId)
 
-      auditLogger.log('UPDATE_AVAILABILITY', { 
-        action: 'complete', 
-        propertyId, 
-        datesCount: dates.length 
+      auditLogger.log('UPDATE_AVAILABILITY', {
+        action: 'complete',
+        propertyId,
+        datesCount: dates.length,
       })
     } catch (error) {
-      auditLogger.log('UPDATE_AVAILABILITY', { 
-        action: 'error', 
+      auditLogger.log('UPDATE_AVAILABILITY', {
+        action: 'error',
         propertyId,
-        error: error instanceof Error ? error.message : 'Unknown error' 
+        error: error instanceof Error ? error.message : 'Unknown error',
       })
       throw error
     }
   }
 
   // Real-time sync management
-  startRealTimeSync(propertyId: string, intervalMs = 300000): void { // 5 minutes default
+  startRealTimeSync(propertyId: string, intervalMs = 300000): void {
+    // 5 minutes default
     this.stopRealTimeSync(propertyId) // Clear existing interval
 
     const interval = setInterval(async () => {
@@ -174,9 +188,9 @@ export class CalendarSyncManager {
 
     this.syncIntervals.set(propertyId, interval)
 
-    auditLogger.log('START_REALTIME_SYNC', { 
-      propertyId, 
-      intervalMs 
+    auditLogger.log('START_REALTIME_SYNC', {
+      propertyId,
+      intervalMs,
     })
   }
 
@@ -185,7 +199,7 @@ export class CalendarSyncManager {
     if (interval) {
       clearInterval(interval)
       this.syncIntervals.delete(propertyId)
-      
+
       auditLogger.log('STOP_REALTIME_SYNC', { propertyId })
     }
   }
@@ -197,15 +211,18 @@ export class CalendarSyncManager {
   }
 
   // Conflict detection and resolution
-  private detectConflicts(propertyId: string, events: CalendarEvent[]): SyncConflict[] {
+  private detectConflicts(
+    propertyId: string,
+    events: CalendarEvent[]
+  ): SyncConflict[] {
     const conflicts: SyncConflict[] = []
     const dateMap: Map<string, CalendarEvent[]> = new Map()
 
     // Group events by date
-    events.forEach(event => {
+    events.forEach((event) => {
       const startDate = parseISO(event.startDate)
       const endDate = parseISO(event.endDate)
-      
+
       let currentDate = startDate
       while (isBefore(currentDate, endDate) || isEqual(currentDate, endDate)) {
         const dateStr = format(currentDate, 'yyyy-MM-dd')
@@ -219,9 +236,11 @@ export class CalendarSyncManager {
 
     // Check for conflicts
     dateMap.forEach((dayEvents, date) => {
-      const reservations = dayEvents.filter(e => e.type === 'reservation' && e.status === 'confirmed')
-      const blocked = dayEvents.filter(e => e.type === 'blocked')
-      
+      const reservations = dayEvents.filter(
+        (e) => e.type === 'reservation' && e.status === 'confirmed'
+      )
+      const blocked = dayEvents.filter((e) => e.type === 'blocked')
+
       // Overbooking detection
       if (reservations.length > 1) {
         conflicts.push({
@@ -230,12 +249,12 @@ export class CalendarSyncManager {
           date,
           type: 'overbooking',
           description: `Multiple reservations on ${date}`,
-          sources: reservations.map(r => r.source),
+          sources: reservations.map((r) => r.source),
         })
       }
 
       // Availability mismatch
-      const availableEvents = dayEvents.filter(e => e.type === 'available')
+      const availableEvents = dayEvents.filter((e) => e.type === 'available')
       if (reservations.length > 0 && availableEvents.length > 0) {
         conflicts.push({
           id: crypto.randomUUID(),
@@ -243,13 +262,16 @@ export class CalendarSyncManager {
           date,
           type: 'availability_mismatch',
           description: `Property marked as available but has reservation on ${date}`,
-          sources: [...reservations.map(r => r.source), ...availableEvents.map(a => a.source)],
+          sources: [
+            ...reservations.map((r) => r.source),
+            ...availableEvents.map((a) => a.source),
+          ],
         })
       }
 
       // Price conflicts (different prices from different sources)
-      const priceEvents = dayEvents.filter(e => e.amount && e.amount > 0)
-      const uniquePrices = [...new Set(priceEvents.map(e => e.amount))]
+      const priceEvents = dayEvents.filter((e) => e.amount && e.amount > 0)
+      const uniquePrices = [...new Set(priceEvents.map((e) => e.amount))]
       if (uniquePrices.length > 1) {
         conflicts.push({
           id: crypto.randomUUID(),
@@ -257,7 +279,7 @@ export class CalendarSyncManager {
           date,
           type: 'price_conflict',
           description: `Different prices found for ${date}: ${uniquePrices.join(', ')}`,
-          sources: priceEvents.map(p => p.source),
+          sources: priceEvents.map((p) => p.source),
         })
       }
     })
@@ -265,7 +287,10 @@ export class CalendarSyncManager {
     return conflicts
   }
 
-  private async autoResolveConflicts(propertyId: string, conflicts: SyncConflict[]): Promise<SyncConflict[]> {
+  private async autoResolveConflicts(
+    propertyId: string,
+    conflicts: SyncConflict[]
+  ): Promise<SyncConflict[]> {
     const resolved: SyncConflict[] = []
 
     for (const conflict of conflicts) {
@@ -273,10 +298,12 @@ export class CalendarSyncManager {
         switch (conflict.type) {
           case 'overbooking':
             // Block the date to prevent further bookings
-            await this.updateAvailability(propertyId, [{ 
-              date: conflict.date, 
-              available: false 
-            }])
+            await this.updateAvailability(propertyId, [
+              {
+                date: conflict.date,
+                available: false,
+              },
+            ])
             conflict.resolution = 'auto_block'
             conflict.resolvedAt = new Date().toISOString()
             resolved.push(conflict)
@@ -284,10 +311,12 @@ export class CalendarSyncManager {
 
           case 'availability_mismatch':
             // If there's a confirmed reservation, mark as unavailable
-            await this.updateAvailability(propertyId, [{ 
-              date: conflict.date, 
-              available: false 
-            }])
+            await this.updateAvailability(propertyId, [
+              {
+                date: conflict.date,
+                available: false,
+              },
+            ])
             conflict.resolution = 'auto_block'
             conflict.resolvedAt = new Date().toISOString()
             resolved.push(conflict)
@@ -304,10 +333,14 @@ export class CalendarSyncManager {
     }
 
     if (resolved.length > 0) {
-      auditLogger.log('AUTO_RESOLVE_CONFLICTS', { 
-        propertyId, 
+      auditLogger.log('AUTO_RESOLVE_CONFLICTS', {
+        propertyId,
         resolvedCount: resolved.length,
-        conflicts: resolved.map(c => ({ id: c.id, type: c.type, resolution: c.resolution }))
+        conflicts: resolved.map((c) => ({
+          id: c.id,
+          type: c.type,
+          resolution: c.resolution,
+        })),
       })
     }
 
@@ -315,14 +348,14 @@ export class CalendarSyncManager {
   }
 
   private convertToCalendarEvents(
-    propertyId: string, 
-    availability: Availability[], 
+    propertyId: string,
+    availability: Availability[],
     reservations: Reservation[]
   ): CalendarEvent[] {
     const events: CalendarEvent[] = []
 
     // Convert availability to events
-    availability.forEach(avail => {
+    availability.forEach((avail) => {
       events.push({
         id: `avail-${propertyId}-${avail.date}`,
         propertyId,
@@ -338,7 +371,7 @@ export class CalendarSyncManager {
     })
 
     // Convert reservations to events
-    reservations.forEach(reservation => {
+    reservations.forEach((reservation) => {
       events.push({
         id: `res-${reservation.id}`,
         propertyId: reservation.propertyId,
@@ -362,18 +395,21 @@ export class CalendarSyncManager {
   }
 
   // Public getters
-  getCalendarEvents(propertyId: string, dateRange?: { start: string; end: string }): CalendarEvent[] {
+  getCalendarEvents(
+    propertyId: string,
+    dateRange?: { start: string; end: string }
+  ): CalendarEvent[] {
     const events = this.calendars.get(propertyId) || []
-    
+
     if (!dateRange) return events
 
     const startDate = parseISO(dateRange.start)
     const endDate = parseISO(dateRange.end)
 
-    return events.filter(event => {
+    return events.filter((event) => {
       const eventStart = parseISO(event.startDate)
       const eventEnd = parseISO(event.endDate)
-      
+
       return (
         (isAfter(eventStart, startDate) || isEqual(eventStart, startDate)) &&
         (isBefore(eventEnd, endDate) || isEqual(eventEnd, endDate))
@@ -387,7 +423,7 @@ export class CalendarSyncManager {
 
   getUnresolvedConflicts(propertyId: string): SyncConflict[] {
     const conflicts = this.conflicts.get(propertyId) || []
-    return conflicts.filter(c => !c.resolution)
+    return conflicts.filter((c) => !c.resolution)
   }
 
   isRealTimeSyncActive(propertyId: string): boolean {
@@ -395,33 +431,46 @@ export class CalendarSyncManager {
   }
 
   // Utility methods
-  async getOccupancyRate(propertyId: string, dateRange: { start: string; end: string }): Promise<number> {
+  async getOccupancyRate(
+    propertyId: string,
+    dateRange: { start: string; end: string }
+  ): Promise<number> {
     const events = this.getCalendarEvents(propertyId, dateRange)
-    const reservations = events.filter(e => e.type === 'reservation' && e.status === 'confirmed')
-    
+    const reservations = events.filter(
+      (e) => e.type === 'reservation' && e.status === 'confirmed'
+    )
+
     const startDate = parseISO(dateRange.start)
     const endDate = parseISO(dateRange.end)
-    const totalDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
-    
+    const totalDays = Math.ceil(
+      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+    )
+
     let occupiedDays = 0
-    reservations.forEach(reservation => {
+    reservations.forEach((reservation) => {
       const resStart = parseISO(reservation.startDate)
       const resEnd = parseISO(reservation.endDate)
-      const days = Math.ceil((resEnd.getTime() - resStart.getTime()) / (1000 * 60 * 60 * 24))
+      const days = Math.ceil(
+        (resEnd.getTime() - resStart.getTime()) / (1000 * 60 * 60 * 24)
+      )
       occupiedDays += days
     })
 
     return totalDays > 0 ? (occupiedDays / totalDays) * 100 : 0
   }
 
-  async getRevenue(propertyId: string, dateRange: { start: string; end: string }): Promise<number> {
+  async getRevenue(
+    propertyId: string,
+    dateRange: { start: string; end: string }
+  ): Promise<number> {
     const events = this.getCalendarEvents(propertyId, dateRange)
-    const reservations = events.filter(e => 
-      e.type === 'reservation' && 
-      (e.status === 'confirmed' || e.status === 'pending') &&
-      e.amount
+    const reservations = events.filter(
+      (e) =>
+        e.type === 'reservation' &&
+        (e.status === 'confirmed' || e.status === 'pending') &&
+        e.amount
     )
-    
+
     return reservations.reduce((total, res) => total + (res.amount || 0), 0)
   }
 }

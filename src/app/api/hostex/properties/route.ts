@@ -8,9 +8,9 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error getting properties:', error)
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to get properties',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     )
@@ -44,7 +44,11 @@ export async function POST(request: NextRequest) {
             { status: 400 }
           )
         }
-        await hostexIntegration.connectChannel(propertyId, channelId, credentials)
+        await hostexIntegration.connectChannel(
+          propertyId,
+          channelId,
+          credentials
+        )
         return NextResponse.json({ success: true })
 
       case 'disconnectChannel':
@@ -58,17 +62,14 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ success: true })
 
       default:
-        return NextResponse.json(
-          { error: 'Invalid action' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
     }
   } catch (error) {
     console.error('Error in properties API:', error)
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to process request',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     )

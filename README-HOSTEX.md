@@ -5,6 +5,7 @@ Esta documentação descreve a integração completa do Hostex ao sistema A Moit
 ## 🎯 Visão Geral
 
 A integração Hostex oferece:
+
 - **Gestão Centralizada**: Todas as reservas e canais em um único dashboard
 - **Sincronização Bidirecional**: Atualizações em tempo real entre canais
 - **Prevenção de Overbooking**: Detecção e resolução automática de conflitos
@@ -44,6 +45,7 @@ pnpm install
 ### 3. Configuração do Webhook
 
 No painel Hostex, configure o webhook endpoint:
+
 - **URL**: `https://seu-dominio.com/api/hostex/webhooks`
 - **Secret**: Use o mesmo valor de `HOSTEX_WEBHOOK_SECRET`
 - **Eventos**: Marque todos os eventos de reserva e disponibilidade
@@ -53,16 +55,19 @@ No painel Hostex, configure o webhook endpoint:
 Acesse o dashboard em `/dashboard` para visualizar:
 
 ### Métricas Principais
+
 - **Receita Total**: Soma de todas as reservas confirmadas
 - **Taxa de Ocupação**: Percentual médio de ocupação das propriedades
 - **Reservas Totais**: Número total de reservas ativas
 - **Canais Conectados**: Quantidade de canais sincronizados
 
 ### Gráficos
+
 - **Receita e Ocupação**: Evolução mensal dos indicadores
 - **Distribuição por Canal**: Percentual de reservas por canal
 
 ### Alertas
+
 - **Conflitos Detectados**: Overbookings e inconsistências de preço
 - **Status de Sincronização**: Estado atual de cada propriedade
 
@@ -155,33 +160,37 @@ const template = await hostexIntegration.createTemplate({
   Equipe A Moita`,
   trigger: {
     type: 'booking_confirmed',
-    timing: 'immediate'
+    timing: 'immediate',
   },
   language: 'pt',
   active: true,
-  variables: ['guestName', 'checkInDate']
+  variables: ['guestName', 'checkInDate'],
 })
 ```
 
 ## 🔧 API Endpoints
 
 ### Status da Integração
+
 ```
 GET /api/hostex/status
 ```
 
 ### Métricas do Dashboard
+
 ```
 GET /api/hostex/dashboard
 ```
 
 ### Propriedades
+
 ```
 GET /api/hostex/properties
 POST /api/hostex/properties
 ```
 
 ### Webhooks
+
 ```
 POST /api/hostex/webhooks
 ```
@@ -227,6 +236,7 @@ const message = await hostexIntegration.sendManualMessage(
 ### Auditoria
 
 Todas as operações são registradas com:
+
 - **Timestamp**: Data/hora da operação
 - **Ação**: Tipo de operação realizada
 - **Usuário**: ID do usuário (quando aplicável)
@@ -253,27 +263,35 @@ const userLogs = auditLogger.getLogsByUser('user_123')
 ### Problemas Comuns
 
 #### 1. Erro de Autenticação
+
 ```
 Error: Invalid API credentials
 ```
+
 **Solução**: Verifique `HOSTEX_API_KEY` e `HOSTEX_API_SECRET` no `.env.local`
 
 #### 2. Webhook não Funcionando
+
 ```
 Error: Invalid signature
 ```
+
 **Solução**: Confirme que `HOSTEX_WEBHOOK_SECRET` está correto
 
 #### 3. Sincronização Falhando
+
 ```
 Error: Property not found
 ```
+
 **Solução**: Verifique se a propriedade existe no Hostex
 
 #### 4. Conflitos não Resolvidos
+
 ```
 Multiple reservations detected
 ```
+
 **Solução**: Acesse o dashboard e resolva manualmente os conflitos
 
 ### Debug Mode
@@ -312,6 +330,7 @@ DEBUG=hostex:* npm run dev
 ## 📞 Suporte
 
 Para suporte técnico:
+
 1. Verifique os logs de auditoria
 2. Consulte esta documentação
 3. Entre em contato com a equipe de desenvolvimento

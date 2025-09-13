@@ -16,8 +16,19 @@ export interface MessageTemplate {
 }
 
 export interface MessageTrigger {
-  type: 'booking_confirmed' | 'check_in_reminder' | 'check_out_reminder' | 'post_stay' | 'cancellation' | 'manual'
-  timing: 'immediate' | 'hours_before' | 'days_before' | 'hours_after' | 'days_after'
+  type:
+    | 'booking_confirmed'
+    | 'check_in_reminder'
+    | 'check_out_reminder'
+    | 'post_stay'
+    | 'cancellation'
+    | 'manual'
+  timing:
+    | 'immediate'
+    | 'hours_before'
+    | 'days_before'
+    | 'hours_after'
+    | 'days_after'
   offset?: number // hours or days depending on timing
   conditions?: {
     channel?: string[]
@@ -78,7 +89,9 @@ export class MessagingManager {
   }
 
   // Template Management
-  async createTemplate(template: Omit<MessageTemplate, 'id' | 'createdAt' | 'updatedAt'>): Promise<MessageTemplate> {
+  async createTemplate(
+    template: Omit<MessageTemplate, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<MessageTemplate> {
     const newTemplate: MessageTemplate = {
       ...template,
       id: crypto.randomUUID(),
@@ -91,13 +104,16 @@ export class MessagingManager {
     auditLogger.log('CREATE_MESSAGE_TEMPLATE', {
       templateId: newTemplate.id,
       name: newTemplate.name,
-      trigger: newTemplate.trigger
+      trigger: newTemplate.trigger,
     })
 
     return newTemplate
   }
 
-  async updateTemplate(id: string, updates: Partial<MessageTemplate>): Promise<MessageTemplate> {
+  async updateTemplate(
+    id: string,
+    updates: Partial<MessageTemplate>
+  ): Promise<MessageTemplate> {
     const template = this.templates.get(id)
     if (!template) {
       throw new Error(`Template ${id} not found`)
@@ -114,7 +130,7 @@ export class MessagingManager {
 
     auditLogger.log('UPDATE_MESSAGE_TEMPLATE', {
       templateId: id,
-      changes: Object.keys(updates)
+      changes: Object.keys(updates),
     })
 
     return updatedTemplate
@@ -130,7 +146,7 @@ export class MessagingManager {
 
     auditLogger.log('DELETE_MESSAGE_TEMPLATE', {
       templateId: id,
-      name: template.name
+      name: template.name,
     })
   }
 
@@ -151,7 +167,7 @@ export class MessagingManager {
       auditLogger.log('PROCESS_RESERVATION_EVENT', {
         eventType,
         reservationId: reservation.id,
-        propertyId: reservation.propertyId
+        propertyId: reservation.propertyId,
       })
 
       const applicableRules = this.getApplicableRules(eventType, reservation)
@@ -162,7 +178,10 @@ export class MessagingManager {
           const template = this.templates.get(templateId)
           if (!template || !template.active) continue
 
-          const message = await this.createMessageFromTemplate(template, reservation)
+          const message = await this.createMessageFromTemplate(
+            template,
+            reservation
+          )
           messages.push(message)
 
           // Schedule or send immediately
@@ -177,7 +196,7 @@ export class MessagingManager {
       auditLogger.log('PROCESS_RESERVATION_EVENT', {
         eventType,
         reservationId: reservation.id,
-        messagesCreated: messages.length
+        messagesCreated: messages.length,
       })
 
       return messages
@@ -185,7 +204,7 @@ export class MessagingManager {
       auditLogger.log('PROCESS_RESERVATION_EVENT', {
         eventType,
         reservationId: reservation.id,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       })
       throw error
     }
@@ -206,7 +225,7 @@ export class MessagingManager {
         messageId,
         reservationId: message.reservationId,
         channel: message.channel,
-        recipient: message.recipient.email
+        recipient: message.recipient.email,
       })
 
       // Update message status
@@ -215,8 +234,14 @@ export class MessagingManager {
       this.messages.set(messageId, message)
 
       // Send via Hostex API (this would be the actual implementation)
-      const reservation = await this.client.getReservation(message.reservationId)
-      await this.client.sendMessage(message.reservationId, message.content, message.templateId)
+      const reservation = await this.client.getReservation(
+        message.reservationId
+      )
+      await this.client.sendMessage(
+        message.reservationId,
+        message.content,
+        message.templateId
+      )
 
       // Simulate delivery confirmation after a delay
       setTimeout(() => {
@@ -228,7 +253,7 @@ export class MessagingManager {
       auditLogger.log('SEND_MESSAGE', {
         messageId,
         status: 'sent',
-        sentAt: message.sentAt
+        sentAt: message.sentAt,
       })
     } catch (error) {
       message.status = 'failed'
@@ -238,7 +263,7 @@ export class MessagingManager {
       auditLogger.log('SEND_MESSAGE', {
         messageId,
         status: 'failed',
-        error: message.error
+        error: message.error,
       })
 
       throw error
@@ -252,7 +277,7 @@ export class MessagingManager {
   ): Promise<Message> {
     try {
       const reservation = await this.client.getReservation(reservationId)
-      
+
       const message: Message = {
         id: crypto.randomUUID(),
         reservationId,
@@ -274,21 +299,23 @@ export class MessagingManager {
       auditLogger.log('SEND_MANUAL_MESSAGE', {
         messageId: message.id,
         reservationId,
-        channel
+        channel,
       })
 
       return message
     } catch (error) {
       auditLogger.log('SEND_MANUAL_MESSAGE', {
         reservationId,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       })
       throw error
     }
   }
 
   // Automation Rules
-  async createAutomationRule(rule: Omit<AutomationRule, 'id' | 'createdAt' | 'updatedAt'>): Promise<AutomationRule> {
+  async createAutomationRule(
+    rule: Omit<AutomationRule, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<AutomationRule> {
     const newRule: AutomationRule = {
       ...rule,
       id: crypto.randomUUID(),
@@ -301,13 +328,16 @@ export class MessagingManager {
     auditLogger.log('CREATE_AUTOMATION_RULE', {
       ruleId: newRule.id,
       name: newRule.name,
-      triggers: newRule.triggers.map(t => t.type)
+      triggers: newRule.triggers.map((t) => t.type),
     })
 
     return newRule
   }
 
-  async updateAutomationRule(id: string, updates: Partial<AutomationRule>): Promise<AutomationRule> {
+  async updateAutomationRule(
+    id: string,
+    updates: Partial<AutomationRule>
+  ): Promise<AutomationRule> {
     const rule = this.automationRules.get(id)
     if (!rule) {
       throw new Error(`Automation rule ${id} not found`)
@@ -324,7 +354,7 @@ export class MessagingManager {
 
     auditLogger.log('UPDATE_AUTOMATION_RULE', {
       ruleId: id,
-      changes: Object.keys(updates)
+      changes: Object.keys(updates),
     })
 
     return updatedRule
@@ -341,7 +371,9 @@ export class MessagingManager {
   ): Promise<Message> {
     const variables = this.extractTemplateVariables(reservation)
     const content = this.replaceVariables(template.content, variables)
-    const subject = template.subject ? this.replaceVariables(template.subject, variables) : undefined
+    const subject = template.subject
+      ? this.replaceVariables(template.subject, variables)
+      : undefined
 
     const message: Message = {
       id: crypto.randomUUID(),
@@ -363,7 +395,11 @@ export class MessagingManager {
     return message
   }
 
-  private scheduleMessage(messageId: string, trigger: MessageTrigger, reservation: Reservation): void {
+  private scheduleMessage(
+    messageId: string,
+    trigger: MessageTrigger,
+    reservation: Reservation
+  ): void {
     if (!trigger.offset) return
 
     let scheduledDate: Date
@@ -375,13 +411,17 @@ export class MessagingManager {
         scheduledDate = addDays(checkInDate, -trigger.offset)
         break
       case 'hours_before':
-        scheduledDate = new Date(checkInDate.getTime() - (trigger.offset * 60 * 60 * 1000))
+        scheduledDate = new Date(
+          checkInDate.getTime() - trigger.offset * 60 * 60 * 1000
+        )
         break
       case 'days_after':
         scheduledDate = addDays(checkOutDate, trigger.offset)
         break
       case 'hours_after':
-        scheduledDate = new Date(checkOutDate.getTime() + (trigger.offset * 60 * 60 * 1000))
+        scheduledDate = new Date(
+          checkOutDate.getTime() + trigger.offset * 60 * 60 * 1000
+        )
         break
       default:
         return
@@ -409,32 +449,51 @@ export class MessagingManager {
     }
   }
 
-  private getApplicableRules(eventType: MessageTrigger['type'], reservation: Reservation): AutomationRule[] {
-    return Array.from(this.automationRules.values()).filter(rule => {
+  private getApplicableRules(
+    eventType: MessageTrigger['type'],
+    reservation: Reservation
+  ): AutomationRule[] {
+    return Array.from(this.automationRules.values()).filter((rule) => {
       if (!rule.active) return false
 
       // Check if rule has matching trigger
-      const hasTrigger = rule.triggers.some(trigger => trigger.type === eventType)
+      const hasTrigger = rule.triggers.some(
+        (trigger) => trigger.type === eventType
+      )
       if (!hasTrigger) return false
 
       // Check conditions
       const conditions = rule.conditions
-      if (conditions.propertyIds && !conditions.propertyIds.includes(reservation.propertyId)) return false
-      if (conditions.channels && !conditions.channels.includes(reservation.channel)) return false
+      if (
+        conditions.propertyIds &&
+        !conditions.propertyIds.includes(reservation.propertyId)
+      )
+        return false
+      if (
+        conditions.channels &&
+        !conditions.channels.includes(reservation.channel)
+      )
+        return false
 
       // Check stay duration
       const checkIn = parseISO(reservation.checkIn)
       const checkOut = parseISO(reservation.checkOut)
-      const stayDays = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24))
+      const stayDays = Math.ceil(
+        (checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24)
+      )
 
-      if (conditions.minStayDays && stayDays < conditions.minStayDays) return false
-      if (conditions.maxStayDays && stayDays > conditions.maxStayDays) return false
+      if (conditions.minStayDays && stayDays < conditions.minStayDays)
+        return false
+      if (conditions.maxStayDays && stayDays > conditions.maxStayDays)
+        return false
 
       return true
     })
   }
 
-  private extractTemplateVariables(reservation: Reservation): Record<string, string> {
+  private extractTemplateVariables(
+    reservation: Reservation
+  ): Record<string, string> {
     const checkIn = parseISO(reservation.checkIn)
     const checkOut = parseISO(reservation.checkOut)
 
@@ -453,7 +512,10 @@ export class MessagingManager {
     }
   }
 
-  private replaceVariables(content: string, variables: Record<string, string>): string {
+  private replaceVariables(
+    content: string,
+    variables: Record<string, string>
+  ): string {
     let result = content
     Object.entries(variables).forEach(([key, value]) => {
       const regex = new RegExp(`{{\\s*${key}\\s*}}`, 'g')
@@ -463,7 +525,10 @@ export class MessagingManager {
   }
 
   private initializeDefaultTemplates(): void {
-    const defaultTemplates: Omit<MessageTemplate, 'id' | 'createdAt' | 'updatedAt'>[] = [
+    const defaultTemplates: Omit<
+      MessageTemplate,
+      'id' | 'createdAt' | 'updatedAt'
+    >[] = [
       {
         name: 'Confirmação de Reserva',
         subject: 'Reserva Confirmada - A Moita',
@@ -483,11 +548,19 @@ Atenciosamente,
 Equipe A Moita`,
         trigger: {
           type: 'booking_confirmed',
-          timing: 'immediate'
+          timing: 'immediate',
         },
         language: 'pt',
         active: true,
-        variables: ['guestName', 'checkInDate', 'checkOutDate', 'checkInTime', 'checkOutTime', 'guests', 'totalAmount']
+        variables: [
+          'guestName',
+          'checkInDate',
+          'checkOutDate',
+          'checkInTime',
+          'checkOutTime',
+          'guests',
+          'totalAmount',
+        ],
       },
       {
         name: 'Lembrete Check-in',
@@ -503,11 +576,11 @@ Equipe A Moita`,
         trigger: {
           type: 'check_in_reminder',
           timing: 'days_before',
-          offset: 1
+          offset: 1,
         },
         language: 'pt',
         active: true,
-        variables: ['guestName', 'checkInDate', 'checkInTime']
+        variables: ['guestName', 'checkInDate', 'checkInTime'],
       },
       {
         name: 'Lembrete Check-out',
@@ -523,11 +596,11 @@ Equipe A Moita`,
         trigger: {
           type: 'check_out_reminder',
           timing: 'hours_before',
-          offset: 2
+          offset: 2,
         },
         language: 'pt',
         active: true,
-        variables: ['guestName', 'checkOutDate', 'checkOutTime']
+        variables: ['guestName', 'checkOutDate', 'checkOutTime'],
       },
       {
         name: 'Agradecimento Pós-Estadia',
@@ -545,15 +618,15 @@ Equipe A Moita`,
         trigger: {
           type: 'post_stay',
           timing: 'days_after',
-          offset: 1
+          offset: 1,
         },
         language: 'pt',
         active: true,
-        variables: ['guestName']
-      }
+        variables: ['guestName'],
+      },
     ]
 
-    defaultTemplates.forEach(template => {
+    defaultTemplates.forEach((template) => {
       this.createTemplate(template)
     })
   }
@@ -561,8 +634,8 @@ Equipe A Moita`,
   // Public getters
   getMessages(reservationId?: string): Message[] {
     const allMessages = Array.from(this.messages.values())
-    return reservationId 
-      ? allMessages.filter(m => m.reservationId === reservationId)
+    return reservationId
+      ? allMessages.filter((m) => m.reservationId === reservationId)
       : allMessages
   }
 
@@ -571,11 +644,15 @@ Equipe A Moita`,
   }
 
   getPendingMessages(): Message[] {
-    return Array.from(this.messages.values()).filter(m => m.status === 'pending')
+    return Array.from(this.messages.values()).filter(
+      (m) => m.status === 'pending'
+    )
   }
 
   getScheduledMessages(): Message[] {
-    return Array.from(this.messages.values()).filter(m => m.scheduledAt && m.status === 'pending')
+    return Array.from(this.messages.values()).filter(
+      (m) => m.scheduledAt && m.status === 'pending'
+    )
   }
 
   cancelScheduledMessage(messageId: string): void {
@@ -583,7 +660,7 @@ Equipe A Moita`,
     if (timeout) {
       clearTimeout(timeout)
       this.scheduledMessages.delete(messageId)
-      
+
       const message = this.messages.get(messageId)
       if (message) {
         message.status = 'failed'

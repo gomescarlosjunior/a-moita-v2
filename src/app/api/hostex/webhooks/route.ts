@@ -3,12 +3,16 @@ import { hostexIntegration } from '@/lib/hostex'
 import { auditLogger } from '@/lib/hostex/config'
 import crypto from 'crypto'
 
-function verifyWebhookSignature(payload: string, signature: string, secret: string): boolean {
+function verifyWebhookSignature(
+  payload: string,
+  signature: string,
+  secret: string
+): boolean {
   const expectedSignature = crypto
     .createHmac('sha256', secret)
     .update(payload)
     .digest('hex')
-  
+
   return crypto.timingSafeEqual(
     Buffer.from(signature, 'hex'),
     Buffer.from(expectedSignature, 'hex')
@@ -23,9 +27,9 @@ export async function POST(request: NextRequest) {
     const envAccessToken = process.env.HOSTEX_ACCESS_TOKEN
     const url = new URL(request.url)
     const accessTokenQuery = url.searchParams.get('access_token')
-     
+
     const payload = await request.text()
-     
+
     // Verification strategy:
     // 1) If we have both a webhook secret and signature, prefer HMAC verification
     // 2) Otherwise, fall back to validating x-api-key header equals HOSTEX_ACCESS_TOKEN
@@ -38,12 +42,20 @@ export async function POST(request: NextRequest) {
       if (!verified) {
         auditLogger.log('WEBHOOK_SIGNATURE_INVALID', {
           hasSignature: !!signature,
-          payloadLength: payload.length
+          payloadLength: payload.length,
         })
       }
-    } else if (apiKeyHeader && envAccessToken && apiKeyHeader === envAccessToken) {
+    } else if (
+      apiKeyHeader &&
+      envAccessToken &&
+      apiKeyHeader === envAccessToken
+    ) {
       verified = true
-    } else if (accessTokenQuery && envAccessToken && accessTokenQuery === envAccessToken) {
+    } else if (
+      accessTokenQuery &&
+      envAccessToken &&
+      accessTokenQuery === envAccessToken
+    ) {
       verified = true
     }
 
@@ -60,7 +72,7 @@ export async function POST(request: NextRequest) {
     auditLogger.log('WEBHOOK_RECEIVED', {
       event,
       reservationId: eventData?.id,
-      propertyId: eventData?.propertyId
+      propertyId: eventData?.propertyId,
     })
 
     // Handle different webhook events
@@ -87,14 +99,14 @@ export async function POST(request: NextRequest) {
       case 'channel.connected':
         auditLogger.log('CHANNEL_CONNECTED_WEBHOOK', {
           propertyId: eventData?.propertyId,
-          channelId: eventData?.channelId
+          channelId: eventData?.channelId,
         })
         break
 
       case 'channel.disconnected':
         auditLogger.log('CHANNEL_DISCONNECTED_WEBHOOK', {
           propertyId: eventData?.propertyId,
-          channelId: eventData?.channelId
+          channelId: eventData?.channelId,
         })
         break
 
@@ -107,13 +119,13 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Webhook processing error:', error)
     auditLogger.log('WEBHOOK_ERROR', {
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error instanceof Error ? error.message : 'Unknown error',
     })
-    
+
     return NextResponse.json(
-      { 
+      {
         error: 'Webhook processing failed',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     )

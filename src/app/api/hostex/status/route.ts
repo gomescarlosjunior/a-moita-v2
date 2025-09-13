@@ -8,9 +8,9 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error getting Hostex status:', error)
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to get integration status',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     )

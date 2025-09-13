@@ -9,17 +9,14 @@ export async function GET(
   try {
     const config = getHostexConfig()
     const hostex = HostexIntegration.getInstance(config)
-    
+
     const propertyId = params.id
 
     // Get property details from Hostex API
     const property = await hostex.getProperty(propertyId)
-    
+
     if (!property) {
-      return NextResponse.json(
-        { error: 'Property not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Property not found' }, { status: 404 })
     }
 
     // Transform the data to match our interface
@@ -33,26 +30,27 @@ export async function GET(
       maxGuests: property.maxGuests || 1,
       status: property.status || 'active',
       channels: property.channels || [],
-      connectedChannels: property.connectedChannels?.map((channel: any) => ({
-        id: channel.id,
-        name: channel.name,
-        status: channel.status || 'disconnected',
-        lastSync: channel.lastSync
-      })) || [],
+      connectedChannels:
+        property.connectedChannels?.map((channel: any) => ({
+          id: channel.id,
+          name: channel.name,
+          status: channel.status || 'disconnected',
+          lastSync: channel.lastSync,
+        })) || [],
       metrics: {
         revenue: property.metrics?.revenue || 0,
         occupancyRate: property.metrics?.occupancyRate || 0,
         totalReservations: property.metrics?.totalReservations || 0,
-        averageRating: property.metrics?.averageRating || 0
+        averageRating: property.metrics?.averageRating || 0,
       },
       createdAt: property.createdAt || new Date().toISOString(),
-      updatedAt: property.updatedAt || new Date().toISOString()
+      updatedAt: property.updatedAt || new Date().toISOString(),
     }
 
     return NextResponse.json(transformedProperty)
   } catch (error) {
     console.error('Error fetching property details:', error)
-    
+
     // Return mock data for development/testing
     const mockProperty = {
       id: params.id,
@@ -69,23 +67,23 @@ export async function GET(
           id: 'airbnb-1',
           name: 'Airbnb',
           status: 'connected' as const,
-          lastSync: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
+          lastSync: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
         },
         {
           id: 'booking-1',
           name: 'Booking.com',
           status: 'connected' as const,
-          lastSync: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString()
-        }
+          lastSync: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+        },
       ],
       metrics: {
-        revenue: 15420.50,
+        revenue: 15420.5,
         occupancyRate: 78.5,
         totalReservations: 24,
-        averageRating: 4.7
+        averageRating: 4.7,
       },
       createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     }
 
     return NextResponse.json(mockProperty)
@@ -99,7 +97,7 @@ export async function PUT(
   try {
     const config = getHostexConfig()
     const hostex = HostexIntegration.getInstance(config)
-    
+
     const propertyId = params.id
     const body = await request.json()
 
@@ -123,7 +121,7 @@ export async function DELETE(
   try {
     const config = getHostexConfig()
     const hostex = HostexIntegration.getInstance(config)
-    
+
     const propertyId = params.id
 
     // Delete property from Hostex API

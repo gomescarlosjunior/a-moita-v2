@@ -1,17 +1,20 @@
 # Guia de Integração de Widgets Hostex
 
 ## Visão Geral
+
 Este guia detalha como substituir os botões mock do dashboard atual pelos widgets reais da integração Hostex, criando uma interface funcional conectada à API.
 
 ## Estrutura Atual vs. Nova Estrutura
 
 ### Dashboard Atual (Mock)
+
 ```
 src/app/dashboard/page.tsx - Dashboard com dados simulados
 src/app/page.tsx - Homepage com botões estáticos
 ```
 
 ### Nova Estrutura Integrada
+
 ```
 src/app/dashboard/page.tsx - Dashboard conectado à API Hostex
 src/components/hostex/ - Widgets reutilizáveis
@@ -21,7 +24,9 @@ src/hooks/hostex/ - Hooks customizados para dados
 ## Plano de Substituição Passo a Passo
 
 ### Fase 1: Validação da Integração
+
 **Status:** ✅ Concluído
+
 - [x] Teste completo da integração (`/integration-test`)
 - [x] Validação de autenticação e conectividade
 - [x] Verificação de endpoints da API
@@ -29,13 +34,14 @@ src/hooks/hostex/ - Hooks customizados para dados
 ### Fase 2: Criação de Hooks Customizados
 
 #### 2.1 Hook para Propriedades
+
 ```typescript
 // src/hooks/hostex/useProperties.ts
 export function useProperties() {
   const [properties, setProperties] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  
+
   // Fetch properties from /api/hostex/properties
   // Handle loading states and errors
   // Provide refresh functionality
@@ -43,12 +49,13 @@ export function useProperties() {
 ```
 
 #### 2.2 Hook para Métricas do Dashboard
+
 ```typescript
 // src/hooks/hostex/useDashboardMetrics.ts
 export function useDashboardMetrics() {
   const [metrics, setMetrics] = useState(null)
   const [loading, setLoading] = useState(true)
-  
+
   // Fetch from /api/hostex/dashboard
   // Auto-refresh every 5 minutes
   // Cache results
@@ -56,6 +63,7 @@ export function useDashboardMetrics() {
 ```
 
 #### 2.3 Hook para Reservas
+
 ```typescript
 // src/hooks/hostex/useReservations.ts
 export function useReservations(propertyId?: string) {
@@ -67,20 +75,21 @@ export function useReservations(propertyId?: string) {
 ### Fase 3: Componentes de Widget
 
 #### 3.1 Widget de Métricas Principais
+
 ```typescript
 // src/components/hostex/MetricsWidget.tsx
 export function MetricsWidget() {
   const { metrics, loading, error } = useDashboardMetrics()
-  
+
   return (
     <div className="grid grid-cols-4 gap-4">
-      <MetricCard 
-        title="Receita Total" 
+      <MetricCard
+        title="Receita Total"
         value={`R$ ${metrics?.totalRevenue?.toLocaleString('pt-BR')}`}
         icon={<CurrencyDollarIcon />}
       />
-      <MetricCard 
-        title="Taxa de Ocupação" 
+      <MetricCard
+        title="Taxa de Ocupação"
         value={`${metrics?.averageOccupancy?.toFixed(1)}%`}
         icon={<ChartBarIcon />}
       />
@@ -91,15 +100,16 @@ export function MetricsWidget() {
 ```
 
 #### 3.2 Widget de Lista de Propriedades
+
 ```typescript
 // src/components/hostex/PropertiesWidget.tsx
 export function PropertiesWidget() {
   const { properties, loading, syncProperty } = useProperties()
-  
+
   return (
     <div className="space-y-4">
       {properties.map(property => (
-        <PropertyCard 
+        <PropertyCard
           key={property.id}
           property={property}
           onSync={() => syncProperty(property.id)}
@@ -112,13 +122,14 @@ export function PropertiesWidget() {
 ```
 
 #### 3.3 Widget de Calendário de Reservas
+
 ```typescript
 // src/components/hostex/ReservationCalendar.tsx
 export function ReservationCalendar({ propertyId }: { propertyId?: string }) {
   const { reservations, availability } = useReservations(propertyId)
-  
+
   return (
-    <Calendar 
+    <Calendar
       events={reservations}
       availability={availability}
       onDateClick={handleDateClick}
@@ -129,11 +140,12 @@ export function ReservationCalendar({ propertyId }: { propertyId?: string }) {
 ```
 
 #### 3.4 Widget de Mensagens Automáticas
+
 ```typescript
 // src/components/hostex/MessagingWidget.tsx
 export function MessagingWidget() {
   const { templates, messages, sendMessage } = useMessaging()
-  
+
   return (
     <div className="space-y-4">
       <MessageTemplateList templates={templates} />
@@ -147,6 +159,7 @@ export function MessagingWidget() {
 ### Fase 4: Atualização do Dashboard Principal
 
 #### 4.1 Substituir Dashboard Mock
+
 ```typescript
 // src/app/dashboard/page.tsx - ANTES (Mock)
 const mockData = {
@@ -172,6 +185,7 @@ export default function DashboardPage() {
 ```
 
 #### 4.2 Navegação Dinâmica
+
 ```typescript
 // Substituir links estáticos por navegação baseada em dados reais
 const { properties } = useProperties()
@@ -187,12 +201,13 @@ const navigationItems = [
 ### Fase 5: Páginas Específicas
 
 #### 5.1 Página de Propriedade Individual
+
 ```typescript
 // src/app/properties/[id]/page.tsx
 export default function PropertyPage({ params }: { params: { id: string } }) {
   const { property, loading } = useProperty(params.id)
   const { reservations } = useReservations(params.id)
-  
+
   return (
     <div>
       <PropertyHeader property={property} />
@@ -205,11 +220,12 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
 ```
 
 #### 5.2 Página de Reservas
+
 ```typescript
 // src/app/reservations/page.tsx
 export default function ReservationsPage() {
   const { reservations, filters, setFilters } = useReservations()
-  
+
   return (
     <div>
       <ReservationFilters filters={filters} onChange={setFilters} />
@@ -223,6 +239,7 @@ export default function ReservationsPage() {
 ### Fase 6: Funcionalidades Avançadas
 
 #### 6.1 Sincronização em Tempo Real
+
 ```typescript
 // src/hooks/hostex/useRealTimeSync.ts
 export function useRealTimeSync() {
@@ -232,18 +249,19 @@ export function useRealTimeSync() {
       // Check for new reservations
       // Update availability
     }, 30000) // Every 30 seconds
-    
+
     return () => clearInterval(interval)
   }, [])
 }
 ```
 
 #### 6.2 Notificações e Alertas
+
 ```typescript
 // src/components/hostex/NotificationCenter.tsx
 export function NotificationCenter() {
   const { conflicts, newReservations, channelIssues } = useNotifications()
-  
+
   return (
     <div className="fixed top-4 right-4 space-y-2">
       {conflicts.map(conflict => (
@@ -258,11 +276,12 @@ export function NotificationCenter() {
 ```
 
 #### 6.3 Ações em Lote
+
 ```typescript
 // src/components/hostex/BulkActions.tsx
 export function BulkActions({ selectedProperties }: { selectedProperties: string[] }) {
   const { syncProperties, updatePricing, blockDates } = usePropertyActions()
-  
+
   return (
     <div className="flex space-x-2">
       <button onClick={() => syncProperties(selectedProperties)}>
@@ -282,6 +301,7 @@ export function BulkActions({ selectedProperties }: { selectedProperties: string
 ## Checklist de Implementação
 
 ### ✅ Pré-requisitos Concluídos
+
 - [x] Integração Hostex configurada
 - [x] API endpoints funcionando
 - [x] Testes de integração passando
@@ -290,36 +310,42 @@ export function BulkActions({ selectedProperties }: { selectedProperties: string
 ### 📋 Próximos Passos
 
 #### Fase 1: Hooks e Utilitários (1-2 dias)
+
 - [ ] Criar `useProperties()` hook
-- [ ] Criar `useDashboardMetrics()` hook  
+- [ ] Criar `useDashboardMetrics()` hook
 - [ ] Criar `useReservations()` hook
 - [ ] Criar `useMessaging()` hook
 - [ ] Implementar cache e error handling
 
 #### Fase 2: Widgets Básicos (2-3 dias)
+
 - [ ] `MetricsWidget` - métricas principais
 - [ ] `PropertiesWidget` - lista de propriedades
 - [ ] `ReservationCalendar` - calendário interativo
 - [ ] `MessagingWidget` - templates e mensagens
 
 #### Fase 3: Dashboard Integrado (1 dia)
+
 - [ ] Substituir dashboard mock por widgets reais
 - [ ] Implementar loading states e error boundaries
 - [ ] Adicionar refresh automático
 
 #### Fase 4: Páginas Específicas (2-3 dias)
+
 - [ ] Página individual de propriedade
 - [ ] Página de reservas com filtros
 - [ ] Página de mensagens e templates
 - [ ] Página de configurações de canais
 
 #### Fase 5: Funcionalidades Avançadas (2-3 dias)
+
 - [ ] Sincronização em tempo real
 - [ ] Sistema de notificações
 - [ ] Ações em lote
 - [ ] Relatórios e exportação
 
 #### Fase 6: Polimento e Testes (1-2 dias)
+
 - [ ] Testes unitários dos componentes
 - [ ] Testes de integração end-to-end
 - [ ] Otimização de performance
@@ -377,11 +403,13 @@ src/
 ```
 
 ## Estimativa de Tempo Total
+
 - **Desenvolvimento:** 10-14 dias
 - **Testes e Polimento:** 3-5 dias
 - **Total:** 2-3 semanas
 
 ## Critérios de Sucesso
+
 1. ✅ Dashboard mostra dados reais da API Hostex
 2. ✅ Propriedades carregam e sincronizam corretamente
 3. ✅ Reservas aparecem no calendário em tempo real

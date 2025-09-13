@@ -25,7 +25,7 @@ export default function Commitment() {
             </p>
             <div className="flex flex-col gap-4 sm:flex-row">
               <a
-                href="https://wa.me/5562991639312?text=Olá%2C%20quero%20participar%20do%20grupo%20do%20Chalé%20A%20Origem"
+                href="https://chat.whatsapp.com/HWC5lSbOAagJWILwm9UrGV?mode=ems_copy_t"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center rounded-full border border-transparent bg-lime-500 px-8 py-3 text-base font-medium text-teal-900 transition-colors duration-200 hover:bg-lime-400"

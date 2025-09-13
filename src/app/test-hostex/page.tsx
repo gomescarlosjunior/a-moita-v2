@@ -35,7 +35,7 @@ export default function HostexTestPage() {
         { name: 'Testar widget de busca', status: 'pending' },
         { name: 'Validar configuração local', status: 'pending' },
         { name: 'Verificar redirecionamento', status: 'pending' },
-      ]
+      ],
     },
     {
       name: 'Widgets Hostex',
@@ -45,7 +45,7 @@ export default function HostexTestPage() {
         { name: 'Carregar search result widget', status: 'pending' },
         { name: 'Testar parâmetros de busca', status: 'pending' },
         { name: 'Validar IDs dos widgets', status: 'pending' },
-      ]
+      ],
     },
     {
       name: 'Integração de Páginas',
@@ -55,8 +55,8 @@ export default function HostexTestPage() {
         { name: 'ChaleAOrigem - widget de resultado', status: 'pending' },
         { name: 'Redirecionamento com parâmetros', status: 'pending' },
         { name: 'Botões de reserva funcionando', status: 'pending' },
-      ]
-    }
+      ],
+    },
   ])
 
   const [isRunning, setIsRunning] = useState(false)
@@ -66,7 +66,8 @@ export default function HostexTestPage() {
   // Load Hostex script for testing
   useEffect(() => {
     const script = document.createElement('script')
-    script.src = 'https://hostex.io/app/assets/js/hostex-widget.js?version=20250910115612'
+    script.src =
+      'https://hostex.io/app/assets/js/hostex-widget.js?version=20250910115612'
     script.type = 'module'
     document.head.appendChild(script)
 
@@ -83,7 +84,7 @@ export default function HostexTestPage() {
       async () => {
         // Test Hostex script loading
         const scripts = Array.from(document.scripts)
-        const hostexScript = scripts.find(script => 
+        const hostexScript = scripts.find((script) =>
           script.src.includes('hostex.io/app/assets/js/hostex-widget.js')
         )
         if (!hostexScript) {
@@ -93,32 +94,37 @@ export default function HostexTestPage() {
       },
       async () => {
         // Test search widget availability
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        const hasSearchWidget = window.customElements && 
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+        const hasSearchWidget =
+          window.customElements &&
           window.customElements.get('hostex-search-widget')
         if (!hasSearchWidget) {
-          return { message: 'Widget de busca carregando... (pode levar alguns segundos)' }
+          return {
+            message:
+              'Widget de busca carregando... (pode levar alguns segundos)',
+          }
         }
         return { message: 'Widget de busca disponível' }
       },
       async () => {
         // Validate local configuration
         const currentUrl = window.location.origin
-        const isLocal = currentUrl.includes('localhost') || currentUrl.includes('127.0.0.1')
-        return { 
+        const isLocal =
+          currentUrl.includes('localhost') || currentUrl.includes('127.0.0.1')
+        return {
           message: `Configuração local detectada: ${currentUrl}`,
-          details: { url: currentUrl, isLocal }
+          details: { url: currentUrl, isLocal },
         }
       },
       async () => {
         // Check redirect configuration
         const redirectUrl = '/chaleAOrigem'
         const fullUrl = `${window.location.origin}${redirectUrl}`
-        return { 
+        return {
           message: `Redirecionamento configurado para: ${fullUrl}`,
-          details: { redirectUrl: fullUrl }
+          details: { redirectUrl: fullUrl },
         }
-      }
+      },
     ]
 
     return await runTestSuite(suiteIndex, tests)
@@ -128,36 +134,38 @@ export default function HostexTestPage() {
     const tests = [
       async () => {
         // Test search widget creation
-        const searchWidgetId = "eyJob3N0X2lkIjoiMTAzMjc5Iiwid2lkZ2V0X2hvc3QiOiJodHRwczovL3cuaG9zdGV4Ym9va2luZy5zaXRlIn0="
-        return { 
+        const searchWidgetId =
+          'eyJob3N0X2lkIjoiMTAzMjc5Iiwid2lkZ2V0X2hvc3QiOiJodHRwczovL3cuaG9zdGV4Ym9va2luZy5zaXRlIn0='
+        return {
           message: 'Search widget ID configurado',
-          details: { id: searchWidgetId }
+          details: { id: searchWidgetId },
         }
       },
       async () => {
         // Test search result widget
-        const resultWidgetId = "eyJob3N0X2lkIjoiMTAzMjc5Iiwid2lkZ2V0X2hvc3QiOiJodHRwczovL3cuaG9zdGV4Ym9va2luZy5zaXRlIn0="
-        return { 
+        const resultWidgetId =
+          'eyJob3N0X2lkIjoiMTAzMjc5Iiwid2lkZ2V0X2hvc3QiOiJodHRwczovL3cuaG9zdGV4Ym9va2luZy5zaXRlIn0='
+        return {
           message: 'Search result widget ID configurado',
-          details: { id: resultWidgetId }
+          details: { id: resultWidgetId },
         }
       },
       async () => {
         // Test search parameters
         const params = ['checkin', 'checkout', 'guests']
-        return { 
+        return {
           message: `${params.length} parâmetros de busca suportados`,
-          details: { parameters: params }
+          details: { parameters: params },
         }
       },
       async () => {
         // Validate widget IDs match property
-        const propertyId = "103279"
-        return { 
+        const propertyId = '103279'
+        return {
           message: `Widget configurado para propriedade ${propertyId}`,
-          details: { propertyId }
+          details: { propertyId },
         }
-      }
+      },
     ]
 
     return await runTestSuite(suiteIndex, tests)
@@ -191,31 +199,35 @@ export default function HostexTestPage() {
       },
       async () => {
         // Test parameter passing
-        const testUrl = '/chaleAOrigem?checkin=2024-12-01&checkout=2024-12-05&guests=2'
-        return { 
+        const testUrl =
+          '/chaleAOrigem?checkin=2024-12-01&checkout=2024-12-05&guests=2'
+        return {
           message: 'Redirecionamento com parâmetros configurado',
-          details: { testUrl }
+          details: { testUrl },
         }
       },
       async () => {
         // Test booking buttons
         const bookingUrl = 'https://w.hostexbooking.site/103279'
-        return { 
+        return {
           message: 'Botões de reserva direcionam para Hostex',
-          details: { bookingUrl }
+          details: { bookingUrl },
         }
-      }
+      },
     ]
 
     return await runTestSuite(suiteIndex, tests)
   }
 
-  const runTestSuite = async (suiteIndex: number, tests: (() => Promise<any>)[]) => {
+  const runTestSuite = async (
+    suiteIndex: number,
+    tests: (() => Promise<any>)[]
+  ) => {
     for (let testIndex = 0; testIndex < tests.length; testIndex++) {
       setCurrentTest(testIndex)
-      
+
       // Update test status to running
-      setTestSuites(prev => {
+      setTestSuites((prev) => {
         const updated = [...prev]
         updated[suiteIndex].tests[testIndex].status = 'running'
         return updated
@@ -227,32 +239,33 @@ export default function HostexTestPage() {
         const duration = Date.now() - startTime
 
         // Update test status to success
-        setTestSuites(prev => {
+        setTestSuites((prev) => {
           const updated = [...prev]
           updated[suiteIndex].tests[testIndex] = {
             ...updated[suiteIndex].tests[testIndex],
             status: 'success',
             message: result.message,
             duration,
-            details: result.details
+            details: result.details,
           }
           return updated
         })
       } catch (error) {
         // Update test status to error
-        setTestSuites(prev => {
+        setTestSuites((prev) => {
           const updated = [...prev]
           updated[suiteIndex].tests[testIndex] = {
             ...updated[suiteIndex].tests[testIndex],
             status: 'error',
-            message: error instanceof Error ? error.message : 'Erro desconhecido'
+            message:
+              error instanceof Error ? error.message : 'Erro desconhecido',
           }
           return updated
         })
       }
 
       // Small delay between tests
-      await new Promise(resolve => setTimeout(resolve, 300))
+      await new Promise((resolve) => setTimeout(resolve, 300))
     }
   }
 
@@ -263,14 +276,14 @@ export default function HostexTestPage() {
     const testRunners = [
       runConfigurationTests,
       runWidgetTests,
-      runIntegrationTests
+      runIntegrationTests,
     ]
 
     for (let suiteIndex = 0; suiteIndex < testRunners.length; suiteIndex++) {
       setCurrentSuite(suiteIndex)
-      
+
       // Update suite status to running
-      setTestSuites(prev => {
+      setTestSuites((prev) => {
         const updated = [...prev]
         updated[suiteIndex].status = 'running'
         return updated
@@ -278,9 +291,9 @@ export default function HostexTestPage() {
 
       try {
         await testRunners[suiteIndex](suiteIndex)
-        
+
         // Update suite status to completed
-        setTestSuites(prev => {
+        setTestSuites((prev) => {
           const updated = [...prev]
           updated[suiteIndex].status = 'completed'
           return updated
@@ -296,17 +309,19 @@ export default function HostexTestPage() {
   }
 
   const resetTests = () => {
-    setTestSuites(prev => prev.map(suite => ({
-      ...suite,
-      status: 'pending',
-      tests: suite.tests.map(test => ({
-        ...test,
+    setTestSuites((prev) =>
+      prev.map((suite) => ({
+        ...suite,
         status: 'pending',
-        message: undefined,
-        duration: undefined,
-        details: undefined
+        tests: suite.tests.map((test) => ({
+          ...test,
+          status: 'pending',
+          message: undefined,
+          duration: undefined,
+          details: undefined,
+        })),
       }))
-    })))
+    )
     setCurrentSuite(null)
     setCurrentTest(null)
   }
@@ -318,16 +333,18 @@ export default function HostexTestPage() {
       case 'error':
         return <XCircleIcon className="h-5 w-5 text-red-500" />
       case 'running':
-        return <ArrowPathIcon className="h-5 w-5 text-blue-500 animate-spin" />
+        return <ArrowPathIcon className="h-5 w-5 animate-spin text-blue-500" />
       default:
         return <ClockIcon className="h-5 w-5 text-gray-400" />
     }
   }
 
   const getOverallStatus = () => {
-    const allTests = testSuites.flatMap(suite => suite.tests)
-    const successCount = allTests.filter(test => test.status === 'success').length
-    const errorCount = allTests.filter(test => test.status === 'error').length
+    const allTests = testSuites.flatMap((suite) => suite.tests)
+    const successCount = allTests.filter(
+      (test) => test.status === 'success'
+    ).length
+    const errorCount = allTests.filter((test) => test.status === 'error').length
     const totalCount = allTests.length
 
     if (errorCount > 0) {
@@ -335,7 +352,10 @@ export default function HostexTestPage() {
     } else if (successCount === totalCount) {
       return { status: 'success', message: 'Todos os testes passaram!' }
     } else {
-      return { status: 'pending', message: `${successCount}/${totalCount} testes concluídos` }
+      return {
+        status: 'pending',
+        message: `${successCount}/${totalCount} testes concluídos`,
+      }
     }
   }
 
@@ -343,10 +363,10 @@ export default function HostexTestPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="mb-2 text-3xl font-bold text-gray-900">
             Testes de Integração Hostex
           </h1>
           <p className="text-gray-600">
@@ -358,19 +378,20 @@ export default function HostexTestPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 p-6 bg-white rounded-lg shadow border"
+          className="mb-8 rounded-lg border bg-white p-6 shadow"
         >
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <h3 className="mb-4 text-lg font-semibold text-gray-900">
             Demo - Widget de Busca Hostex
           </h3>
-          <div className="bg-gray-50 rounded-lg p-4">
-            <hostex-search-widget 
-              result-url="/chaleAOrigem" 
+          <div className="rounded-lg bg-gray-50 p-4">
+            <hostex-search-widget
+              result-url="/chaleAOrigem"
               id="eyJob3N0X2lkIjoiMTAzMjc5Iiwid2lkZ2V0X2hvc3QiOiJodHRwczovL3cuaG9zdGV4Ym9va2luZy5zaXRlIn0="
             />
           </div>
-          <p className="text-sm text-gray-600 mt-2">
-            Este widget deve redirecionar para /chaleAOrigem com os parâmetros de busca
+          <p className="mt-2 text-sm text-gray-600">
+            Este widget deve redirecionar para /chaleAOrigem com os parâmetros
+            de busca
           </p>
         </motion.div>
 
@@ -378,12 +399,12 @@ export default function HostexTestPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`mb-8 p-6 rounded-lg border-2 ${
-            overallStatus.status === 'success' 
-              ? 'bg-green-50 border-green-200' 
+          className={`mb-8 rounded-lg border-2 p-6 ${
+            overallStatus.status === 'success'
+              ? 'border-green-200 bg-green-50'
               : overallStatus.status === 'error'
-              ? 'bg-red-50 border-red-200'
-              : 'bg-gray-50 border-gray-200'
+                ? 'border-red-200 bg-red-50'
+                : 'border-gray-200 bg-gray-50'
           }`}
         >
           <div className="flex items-center justify-between">
@@ -408,14 +429,14 @@ export default function HostexTestPage() {
               <button
                 onClick={resetTests}
                 disabled={isRunning}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50"
+                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
               >
                 Resetar
               </button>
               <button
                 onClick={runAllTests}
                 disabled={isRunning}
-                className="px-6 py-2 text-sm font-medium text-white bg-teal-600 rounded-md hover:bg-teal-700 disabled:opacity-50 flex items-center space-x-2"
+                className="flex items-center space-x-2 rounded-md bg-teal-600 px-6 py-2 text-sm font-medium text-white hover:bg-teal-700 disabled:opacity-50"
               >
                 {isRunning ? (
                   <ArrowPathIcon className="h-4 w-4 animate-spin" />
@@ -436,25 +457,25 @@ export default function HostexTestPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: suiteIndex * 0.1 }}
-              className={`bg-white rounded-lg shadow border-l-4 ${
+              className={`rounded-lg border-l-4 bg-white shadow ${
                 currentSuite === suiteIndex
                   ? 'border-blue-500'
                   : suite.status === 'completed'
-                  ? 'border-green-500'
-                  : 'border-gray-200'
+                    ? 'border-green-500'
+                    : 'border-gray-200'
               }`}
             >
               <div className="p-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                <h3 className="mb-4 text-lg font-medium text-gray-900">
                   {suite.name}
                 </h3>
                 <div className="space-y-3">
                   {suite.tests.map((test, testIndex) => (
                     <div
                       key={test.name}
-                      className={`flex items-center justify-between p-3 rounded-md ${
+                      className={`flex items-center justify-between rounded-md p-3 ${
                         currentSuite === suiteIndex && currentTest === testIndex
-                          ? 'bg-blue-50 border border-blue-200'
+                          ? 'border border-blue-200 bg-blue-50'
                           : 'bg-gray-50'
                       }`}
                     >
@@ -465,9 +486,13 @@ export default function HostexTestPage() {
                             {test.name}
                           </p>
                           {test.message && (
-                            <p className={`text-xs ${
-                              test.status === 'error' ? 'text-red-600' : 'text-gray-600'
-                            }`}>
+                            <p
+                              className={`text-xs ${
+                                test.status === 'error'
+                                  ? 'text-red-600'
+                                  : 'text-gray-600'
+                              }`}
+                            >
                               {test.message}
                             </p>
                           )}
