@@ -330,9 +330,7 @@ export default function HomePage() {
                 <h3 className="mb-3 text-3xl font-medium text-teal-800 lg:text-4xl">
                   80%+ área permeável
                 </h3>
-                <p className="text-gray-700">
-                  Conexão real com o Cerrado vivo
-                </p>
+                <p className="text-gray-700">Conexão real com o Cerrado vivo</p>
               </div>
             </div>
             <div className="mb-10 w-full px-4 sm:w-1/2 lg:w-1/4">

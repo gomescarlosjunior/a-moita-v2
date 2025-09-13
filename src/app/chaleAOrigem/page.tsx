@@ -653,8 +653,18 @@ export default function ChaleAOrigemPage() {
           <div className="container mx-auto px-4 py-8">
             {(() => {
               const reviews = [
-                { name: 'Maria', date: 'Setembro 2024', initial: 'M', text: 'Experiência incrível! O chalé é exatamente como nas fotos e a conexão com a natureza é única. Recomendo para quem busca tranquilidade e contato com o Cerrado.' },
-                { name: 'João', date: 'Agosto 2024', initial: 'J', text: 'Local perfeito para descansar e se reconectar. A hospitalidade é excepcional e o ambiente é muito bem cuidado. Voltaremos com certeza!' },
+                {
+                  name: 'Maria',
+                  date: 'Setembro 2024',
+                  initial: 'M',
+                  text: 'Experiência incrível! O chalé é exatamente como nas fotos e a conexão com a natureza é única. Recomendo para quem busca tranquilidade e contato com o Cerrado.',
+                },
+                {
+                  name: 'João',
+                  date: 'Agosto 2024',
+                  initial: 'J',
+                  text: 'Local perfeito para descansar e se reconectar. A hospitalidade é excepcional e o ambiente é muito bem cuidado. Voltaremos com certeza!',
+                },
               ]
               const lastTwo = reviews.slice(-2)
               return (
@@ -662,9 +672,15 @@ export default function ChaleAOrigemPage() {
                   {/* Left: Reviews (2 últimas) */}
                   <div className="md:col-span-2">
                     <div className="mb-4 flex items-center space-x-3">
-                      <h2 className="text-xl font-semibold text-gray-900">Avaliações</h2>
+                      <h2 className="text-xl font-semibold text-gray-900">
+                        Avaliações
+                      </h2>
                       <div className="flex items-center space-x-1">
-                        <svg className="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <svg
+                          className="h-5 w-5 text-yellow-400"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
                           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                         </svg>
                         <span className="font-medium text-gray-900">4.9</span>
@@ -673,13 +689,20 @@ export default function ChaleAOrigemPage() {
                     </div>
                     <div className="grid gap-4">
                       {lastTwo.map((r, idx) => (
-                        <div key={idx} className="rounded-lg border border-gray-200 p-5">
+                        <div
+                          key={idx}
+                          className="rounded-lg border border-gray-200 p-5"
+                        >
                           <div className="mb-3 flex items-center space-x-3">
                             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-100">
-                              <span className="text-sm font-medium text-teal-600">{r.initial}</span>
+                              <span className="text-sm font-medium text-teal-600">
+                                {r.initial}
+                              </span>
                             </div>
                             <div>
-                              <p className="font-medium text-gray-900">{r.name}</p>
+                              <p className="font-medium text-gray-900">
+                                {r.name}
+                              </p>
                               <p className="text-sm text-gray-600">{r.date}</p>
                             </div>
                           </div>
@@ -691,20 +714,33 @@ export default function ChaleAOrigemPage() {
 
                   {/* Right: Map */}
                   <div className="md:col-span-3">
-                    <h2 className="text-xl font-semibold text-gray-900 mb-1">Onde você estará</h2>
-                    <p className="text-gray-600 mb-4">A Moita | Refúgio Natural em Abadiânia-GO, Fazenda Lages do Capivari - BR-414, KM 22 - Chácara 62 - Posse d'Abadia, Abadiânia - GO, 72940-000</p>
+                    <h2 className="mb-1 text-xl font-semibold text-gray-900">
+                      Onde você estará
+                    </h2>
+                    <p className="mb-4 text-gray-600">
+                      A Moita | Refúgio Natural em Abadiânia-GO, Fazenda Lages
+                      do Capivari - BR-414, KM 22 - Chácara 62 - Posse d'Abadia,
+                      Abadiânia - GO, 72940-000
+                    </p>
                     <div className="overflow-hidden rounded-2xl border border-gray-200">
-                      <div className="relative w-full h-[260px] sm:h-[300px] md:h-[360px] lg:h-[400px]">
+                      <div className="relative h-[260px] w-full sm:h-[300px] md:h-[360px] lg:h-[400px]">
                         <iframe
                           title="Mapa - Onde você estará"
                           src={
                             'https://www.google.com/maps?q=' +
-                            encodeURIComponent("A Moita | Refúgio Natural em Abadiânia-GO, Fazenda Lages do Capivari - BR-414, KM 22 - Chácara 62 - Posse d'Abadia, Abadiânia - GO, 72940-000") +
+                            encodeURIComponent(
+                              "A Moita | Refúgio Natural em Abadiânia-GO, Fazenda Lages do Capivari - BR-414, KM 22 - Chácara 62 - Posse d'Abadia, Abadiânia - GO, 72940-000"
+                            ) +
                             '&output=embed'
                           }
                           width="100%"
                           height="100%"
-                          style={{ border: 0, position: 'absolute', top: 0, left: 0 }}
+                          style={{
+                            border: 0,
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                          }}
                           allowFullScreen
                           loading="lazy"
                           referrerPolicy="no-referrer-when-downgrade"
