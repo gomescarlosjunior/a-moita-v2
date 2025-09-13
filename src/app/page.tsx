@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
+import SmartCalendar from '@/components/SmartCalendar'
 
 // Dynamically import components with no SSR
 const FAQ = dynamic(() => import('@/app/components/FAQ'), { ssr: false })
@@ -12,8 +13,92 @@ const Commitment = dynamic(() => import('@/app/components/Commitment'), {
   ssr: false,
 })
 
+// Use a single, canonical Hostex widget ID across the app.
+// Base64 for {"host_id":"103279","widget_host":"https://w.hostexbooking.site"}
+const HOSTEX_WIDGET_ID =
+  'eyJob3N0X2lkIjoiMTAzMjc5Iiwid2lkZ2V0X2hvc3QiOiJodHRwczovL3cuaG9zdGV4Ym9va2luZy5zaXRlIn0=';
+
 export default function HomePage() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false)
+
+  useEffect(() => {
+    // Load Hostex widget script
+    const script = document.createElement('script')
+    script.src = 'https://hostex.io/app/assets/js/hostex-widget.js?version=20250910115612'
+    script.type = 'module'
+    document.head.appendChild(script)
+
+    // Widget loading detection
+    const checkWidget = () => {
+      setTimeout(() => {
+        const widget = document.querySelector('hostex-search-widget')
+        const fallback = document.getElementById('fallback-search')
+        
+        if (!widget || !widget.shadowRoot) {
+          // Show fallback if widget doesn't load
+          if (fallback) {
+            fallback.classList.remove('hidden')
+          }
+        } else {
+          // Hide fallback if widget loads
+          if (fallback) {
+            fallback.classList.add('hidden')
+          }
+        }
+      }, 3000) // Wait 3 seconds for widget to load
+    }
+
+    script.onload = checkWidget
+    script.onerror = checkWidget
+
+    return () => {
+      // Cleanup script on unmount
+      if (document.head.contains(script)) {
+        document.head.removeChild(script)
+      }
+    }
+  }, [])
+
+  const handleReserveClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    // Trigger the Hostex search widget submit so it redirects to /chaleAOrigem
+    const widget = document.querySelector('hostex-search-widget') as any
+    const shadow = widget?.shadowRoot
+    const submitBtn = shadow?.querySelector('button[type="submit"], .search-button') as HTMLButtonElement | null
+    if (submitBtn) {
+      submitBtn.click()
+      return
+    }
+    // Fallback: go to results page
+    window.location.href = '/chaleAOrigem'
+  }
+
+  const handleFallbackSearch = () => {
+    // Get form values and redirect to chaleAOrigem with parameters
+    const checkin = (document.querySelector('input[type="date"]:first-of-type') as HTMLInputElement)?.value
+    const checkout = (document.querySelector('input[type="date"]:last-of-type') as HTMLInputElement)?.value
+    const guests = (document.querySelector('select') as HTMLSelectElement)?.value
+    
+    const params = new URLSearchParams()
+    if (checkin) params.append('checkin', checkin)
+    if (checkout) params.append('checkout', checkout)
+    if (guests) params.append('guests', guests)
+    
+    const url = `/chaleAOrigem${params.toString() ? '?' + params.toString() : ''}`
+    window.location.href = url
+  }
+
+  const handleSmartCalendarBooking = (checkin: Date, checkout: Date) => {
+    // Redirect to chaleAOrigem with selected dates
+    const params = new URLSearchParams()
+    params.append('checkin', checkin.toISOString().split('T')[0])
+    params.append('checkout', checkout.toISOString().split('T')[0])
+    params.append('guests', '2') // Default to 2 guests
+    
+    const url = `/chaleAOrigem?${params.toString()}`
+    window.location.href = url
+  }
 
   const solutions = [
     {
@@ -106,7 +191,7 @@ export default function HomePage() {
             fill="white"
           />
           <path
-            d="M24 12C15.1634 12 8 19.1634 8 28C8 36.8366 15.1634 44 24 44C32.8366 44 40 36.8366 40 28C40 19.1634 32.8366 12 24 12ZM24 40C17.3726 40 12 34.6274 12 28C12 21.3726 17.3726 16 24 16C30.6274 16 36 21.3726 36 28C36 34.6274 30.6274 40 24 40Z"
+            d="M32 32H16V28H32V32ZM36 24H12V20H36V24ZM40 16H8V12H40V16Z"
             fill="#022C22"
           />
         </svg>
@@ -161,10 +246,12 @@ export default function HomePage() {
                 >
                   Chalés
                 </a>
+
+                {/* Search is shown in the hero section below, removed from header for clarity */}
+
                 <a
-                  href="https://wa.me/5562991639312?text=Olá, temos dias disponíveis?"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="#"
+                  onClick={handleReserveClick}
                   className="rounded-full bg-gold-300 px-4 py-2 text-sm font-medium text-teal-900 transition-colors hover:bg-gold-400 lg:px-6 lg:text-base"
                 >
                   Reservar
@@ -240,11 +327,12 @@ export default function HomePage() {
                 Chalés
               </a>
               <a
-                href="https://wa.me/5562991639312?text=Olá, temos dias disponíveis?"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#"
+                onClick={(e) => {
+                  handleReserveClick(e)
+                  setMobileNavOpen(false)
+                }}
                 className="mt-2 block w-full rounded-full bg-gold-300 px-6 py-2 text-center font-medium text-teal-900 transition-colors hover:bg-gold-400"
-                onClick={() => setMobileNavOpen(false)}
               >
                 Reservar
               </a>
@@ -252,6 +340,111 @@ export default function HomePage() {
           </div>
         </nav>
       </header>
+
+      {/* Mobile-only search trigger (Airbnb-like) */}
+      <div className="fixed left-0 right-0 top-[90px] z-40 px-4 md:hidden pointer-events-none">
+        <button
+          onClick={() => setIsMobileSearchOpen(true)}
+          className="pointer-events-auto mx-auto flex w-full max-w-md items-center gap-2 rounded-full bg-white/95 px-4 py-3 text-left shadow-lg ring-1 ring-black/5"
+          aria-label="Iniciar busca"
+        >
+          <svg className="h-5 w-5 text-teal-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <span className="flex-1 text-sm text-teal-900/80">Inicie sua busca</span>
+        </button>
+      </div>
+
+      {/* Mobile full-screen calendar overlay */}
+      {isMobileSearchOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setIsMobileSearchOpen(false)} />
+          <div className="absolute inset-x-0 bottom-0 top-0 flex flex-col rounded-t-2xl bg-white">
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b">
+              <button className="text-teal-900" onClick={() => setIsMobileSearchOpen(false)} aria-label="Fechar">
+                Fechar
+              </button>
+              <div className="text-sm font-medium text-teal-900">Quando?</div>
+              <div className="w-10"></div>
+            </div>
+            {/* Widget area */}
+            <div className="flex-1 overflow-auto px-3 py-3">
+              <div className="mobile-widget-wrapper">
+                <style jsx>{`
+                  .mobile-widget-wrapper hostex-search-widget {
+                    display: block;
+                    width: 100%;
+                    transform: scale(0.95);
+                    transform-origin: top center;
+                    /* Theme variables aligned to brand */
+                    --primary-bg-color: #F6F6F2;
+                    --primary-color: var(--user-primary-color, #388087);
+                    --site-btn-text-color: #F6F6F2;
+                    --site-rateplan-activated-border-color: #388087;
+                    --site-rateplan-border-color: #CBCBCB;
+                    --site-rateplan-opacity-bg: #6FB3B826;
+                    --site-rateplan-text-color: var(--site-widget-text-color);
+                    --site-rateplan-text-color-secondary: #388087;
+                    --site-rateplan-text-color-tertiary: var(--site-widget-text-color-secondary);
+                    --site-rateplan-text-color-total: var(--primary-color);
+                    --site-widget-bg-color: #F6F6F2;
+                    --site-widget-border-color: #B3D5D9;
+                    --site-widget-btn-bg-color: var(--primary-color);
+                    --site-widget-btn-border-color: transparent;
+                    --site-widget-btn-radius: 9999px;
+                    --site-widget-btn-text-color: var(--site-btn-text-color);
+                    --site-widget-text-color: var(--primary-color,#388087);
+                    --site-widget-text-color-secondary: #728A8D;
+                    --site-widget-text-color-warning: #FF8846;
+                    --site-widget-text-light: #B3D5D9;
+                    --user-primary-color: #0d2b24;
+                  }
+                  /* Calendar popovers must be clickable above overlay */
+                  .mobile-widget-wrapper :global(.calendar-container),
+                  .mobile-widget-wrapper :global(.calendar-overlay),
+                  .mobile-widget-wrapper :global(.date-picker-dropdown) {
+                    z-index: 99999 !important;
+                    position: relative !important;
+                    pointer-events: auto !important;
+                  }
+                `}</style>
+                <hostex-search-widget
+                  result-url="/chaleAOrigem"
+                  id={HOSTEX_WIDGET_ID}
+                  style={{ width: '100%', display: 'block' }}
+                />
+              </div>
+            </div>
+            {/* Footer actions */}
+            <div className="flex items-center justify-between gap-3 border-t px-4 py-3">
+              <button
+                className="rounded-full px-4 py-2 text-sm font-medium text-teal-900/80"
+                onClick={() => {
+                  // Try to clear selection via Shadow DOM buttons if present
+                  const el = document.querySelector('.mobile-widget-wrapper hostex-search-widget') as any
+                  const btn = el?.shadowRoot?.querySelector('.clear-button, .reset, button[type="reset"]') as HTMLButtonElement | null
+                  btn?.click()
+                }}
+              >
+                Limpar
+              </button>
+              <button
+                className="rounded-full bg-teal-900 px-5 py-2 text-sm font-semibold text-white"
+                onClick={() => {
+                  const el = document.querySelector('.mobile-widget-wrapper hostex-search-widget') as any
+                  const submit = el?.shadowRoot?.querySelector('button[type="submit"], .search-button') as HTMLButtonElement | null
+                  if (submit) submit.click()
+                  setIsMobileSearchOpen(false)
+                }}
+              >
+                Avançar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Hero Section */}
       <div className="relative bg-teal-900 pb-32 pt-24 sm:pb-40 lg:pb-64 lg:pt-40">
@@ -263,6 +456,145 @@ export default function HomePage() {
             className="object-cover opacity-90"
             priority
           />
+          {/* Fixed transparent container with only the widget */}
+          <div className="fixed left-0 right-0 z-40 pointer-events-none top-[150px] md:top-[170px] hidden md:block">
+            <div className="container mx-auto px-4">
+              <div className="header-search-wrapper mx-auto max-w-3xl pointer-events-auto">
+                <style jsx>{`
+                  .header-search-wrapper { position: relative; }
+                  .header-search-wrapper hostex-search-widget {
+                    display: block;
+                    width: 100%;
+                    transform: scale(0.7);
+                    transform-origin: top center;
+                    /* Hostex theme variables */
+                    --primary-bg-color: #F6F6F2;
+                    --primary-color: var(--user-primary-color, #388087);
+                    --site-btn-text-color: #F6F6F2;
+                    --site-rateplan-activated-border-color: #388087;
+                    --site-rateplan-border-color: #CBCBCB;
+                    --site-rateplan-opacity-bg: #6FB3B826;
+                    --site-rateplan-text-color: var(--site-widget-text-color);
+                    --site-rateplan-text-color-secondary: #388087;
+                    --site-rateplan-text-color-tertiary: var(--site-widget-text-color-secondary);
+                    --site-rateplan-text-color-total: var(--primary-color);
+                    --site-widget-bg-color: #F6F6F2;
+                    --site-widget-border-color: #B3D5D9;
+                    --site-widget-btn-bg-color: var(--primary-color);
+                    --site-widget-btn-border-color: transparent;
+                    --site-widget-btn-radius: 9999px;
+                    --site-widget-btn-text-color: var(--site-btn-text-color);
+                    --site-widget-text-color: var(--primary-color,#388087);
+                    --site-widget-text-color-secondary: #728A8D;
+                    --site-widget-text-color-warning: #FF8846;
+                    --site-widget-text-light: #B3D5D9;
+                    --user-primary-color: #0d2b24;
+                  }
+                  /* Keep calendar overlays usable */
+                  .header-search-wrapper :global(.calendar-container),
+                  .header-search-wrapper :global(.calendar-overlay),
+                  .header-search-wrapper :global(.hostex-calendar),
+                  .header-search-wrapper :global(.date-picker-overlay) {
+                    z-index: 99999 !important;
+                    position: relative !important;
+                    pointer-events: auto !important;
+                  }
+                  /* Compact Airbnb-style calendar overrides */
+                  .header-search-wrapper :global(.calendar-popup),
+                  .header-search-wrapper :global(.date-picker-popup),
+                  .header-search-wrapper :global(.calendar-container) {
+                    max-width: 660px !important;
+                    max-height: 480px !important;
+                    width: auto !important;
+                    height: auto !important;
+                    border-radius: 16px !important;
+                    box-shadow: 0 16px 32px rgba(0,0,0,0.12), 0 0 1px rgba(0,0,0,0.05) !important;
+                    border: none !important;
+                    padding: 24px !important;
+                    background: #ffffff !important;
+                    position: absolute !important;
+                    top: auto !important;
+                    left: auto !important;
+                    right: auto !important;
+                    bottom: auto !important;
+                    transform: none !important;
+                    overflow: hidden !important;
+                    z-index: 9999 !important;
+                  }
+                  /* Force dropdown behavior, not fullscreen */
+                  .header-search-wrapper :global(.calendar-popup.fullscreen),
+                  .header-search-wrapper :global(.date-picker-popup.fullscreen),
+                  .header-search-wrapper :global(.calendar-overlay.fullscreen) {
+                    position: absolute !important;
+                    top: 100% !important;
+                    left: 0 !important;
+                    right: auto !important;
+                    bottom: auto !important;
+                    width: 660px !important;
+                    height: auto !important;
+                    max-height: 480px !important;
+                    margin: 8px 0 !important;
+                    transform: none !important;
+                  }
+                  /* Prevent body scroll lock */
+                  .header-search-wrapper :global(.calendar-popup),
+                  .header-search-wrapper :global(.date-picker-popup) {
+                    overflow-y: auto !important;
+                    overscroll-behavior: contain !important;
+                  }
+                  .header-search-wrapper :global(.calendar-month),
+                  .header-search-wrapper :global(.month-view) {
+                    min-height: 260px !important;
+                    max-height: 300px !important;
+                    overflow: hidden !important;
+                  }
+                  /* Invert search icon button: white pill with green icon */
+                  .header-search-wrapper :global(.search-button) {
+                    background: #ffffff !important;
+                    color: #0D2B24 !important;
+                    border-radius: 9999px !important;
+                  }
+                  .header-search-wrapper :global(.search-button svg),
+                  .header-search-wrapper :global(.search-button path),
+                  .header-search-wrapper :global(.search-button i) {
+                    color: #0D2B24 !important;
+                    fill: #0D2B24 !important;
+                  }
+                  /* Calendar grid spacing */
+                  .header-search-wrapper :global(.calendar-grid),
+                  .header-search-wrapper :global(.days-grid) {
+                    gap: 2px !important;
+                    padding: 8px 0 !important;
+                  }
+                  /* Month transition animations */
+                  .header-search-wrapper :global(.month-transition-enter) {
+                    opacity: 0 !important;
+                    transform: translateX(20px) !important;
+                  }
+                  .header-search-wrapper :global(.month-transition-enter-active) {
+                    opacity: 1 !important;
+                    transform: translateX(0) !important;
+                    transition: opacity 0.2s ease, transform 0.2s ease !important;
+                  }
+                  .header-search-wrapper :global(.month-transition-exit) {
+                    opacity: 1 !important;
+                    transform: translateX(0) !important;
+                  }
+                  .header-search-wrapper :global(.month-transition-exit-active) {
+                    opacity: 0 !important;
+                    transform: translateX(-20px) !important;
+                    transition: opacity 0.2s ease, transform 0.2s ease !important;
+                  }
+                `}</style>
+                <hostex-search-widget
+                  result-url="/chaleAOrigem"
+                  id={HOSTEX_WIDGET_ID}
+                  className="hostex-search-widget-34xqaa0"
+                  style={{ width: '100%', display: 'block' }}
+                />
+              </div>
+            </div>
+          </div>
         </div>
         <div className="container relative z-10 mx-auto px-4">
           <div className="mx-auto max-w-4xl text-center">
@@ -283,19 +615,8 @@ export default function HomePage() {
               Conexão profunda com a natureza, simplicidade que acolhe e
               hospitalidade regenerativa no coração do Cerrado.
             </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-            >
-              <a
-                href="https://wa.me/5562991639312?text=Olá, gostaria de fazer uma reserva"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex transform items-center justify-center rounded-full bg-lime-500 px-8 py-4 text-lg font-medium text-teal-900 transition-colors duration-300 hover:scale-105 hover:bg-lime-400"
-              >
-                Reservar Agora
-              </a>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}>
+              {/* Botão 'Reservar Agora' removido conforme solicitado; a busca será o CTA principal */}
             </motion.div>
           </div>
         </div>
@@ -420,10 +741,11 @@ export default function HomePage() {
                   criando experiências que renovam corpo e alma.
                 </p>
                 <a
-                  href="#reservar"
+                  href="#"
+                  onClick={handleReserveClick}
                   className="inline-block rounded-full bg-teal-900 px-8 py-3 font-medium text-white transition-colors hover:bg-teal-800"
                 >
-                  Reservar Agora
+                  {/* Botão removido; manter espaço para alinhamento caso necessário */}
                 </a>
               </div>
             </div>
@@ -470,11 +792,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Commitment Section */}
-      <Commitment />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.5 }}
+        className="mb-8 max-w-5xl mx-auto"
+      >
+        {/* Commitment Section */}
+        <Commitment />
 
-      {/* FAQ Section */}
-      <FAQ />
+        {/* FAQ Section */}
+        <FAQ />
+      </motion.div>
 
       {/* Footer */}
       <footer
@@ -572,9 +901,8 @@ export default function HomePage() {
                   </li>
                   <li>
                     <a
-                      href="https://wa.me/5562991639312?text=Olá, gostaria de fazer uma reserva"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href="#"
+                      onClick={handleReserveClick}
                       className="text-base text-gray-600 transition-colors hover:text-lime-600"
                     >
                       Reservar
