@@ -201,7 +201,7 @@ export default function ChaleAOrigemPage() {
       <header className="relative bg-teal-800">
         <div className="absolute inset-0 overflow-hidden">
           <Image
-            src="/assets/backgrounds/waves-header.png"
+            src="/assets/backgrounds/bg-waves.png"
             alt="Ondas de fundo"
             fill
             className="object-cover opacity-10"
@@ -741,11 +741,21 @@ export default function ChaleAOrigemPage() {
                         {/* Always-visible pin overlay (does not block interactions) */}
                         <div
                           aria-hidden
-                          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
-                          style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.45))' }}
+                          className="pointer-events-none absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2"
+                          style={{
+                            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.45))',
+                          }}
                         >
-                          <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
-                            <path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7z" fill="#d90429" />
+                          <svg
+                            width="36"
+                            height="36"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                          >
+                            <path
+                              d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7z"
+                              fill="#d90429"
+                            />
                             <circle cx="12" cy="9" r="3" fill="#ffffff" />
                           </svg>
                         </div>
@@ -773,7 +783,18 @@ export default function ChaleAOrigemPage() {
       </main>
 
       {/* Footer - identical to homepage */}
-      <footer className="bg-gray-50">
+      <footer
+        className="relative py-12 lg:py-16"
+        style={{ backgroundColor: '#f3efe8' }}
+      >
+        <Image
+          className="absolute bottom-0 left-0"
+          src="/assets/backgrounds/waves-footer.png"
+          alt=""
+          width={200}
+          height={200}
+          priority
+        />
         <div className="container relative mx-auto px-4">
           <div className="mb-12 flex flex-col justify-between lg:flex-row">
             <div className="mb-8 lg:mb-0">

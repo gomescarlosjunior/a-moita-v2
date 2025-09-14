@@ -264,15 +264,15 @@ export default function HomePage() {
       {/* Hero Section */}
       <div className="relative bg-teal-900 pb-32 pt-8 sm:pb-40 lg:pb-64 lg:pt-20">
         {/* Hero Background */}
-        <div className="absolute inset-0 -z-10 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/70" />
+        <div className="absolute inset-0 overflow-hidden">
           <Image
             src="/assets/backgrounds/bg-waves.png"
             alt="Background waves"
             fill
-            className="object-cover opacity-90"
+            className="object-cover"
             priority
           />
+          <div className="absolute inset-0 bg-gradient-to-b from-teal-900/60 via-teal-900/40 to-teal-900/80" />
         </div>
 
         {/* Active Reservation Bar - Moved to top */}
