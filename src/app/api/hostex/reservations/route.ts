@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { HostexIntegration } from '@/lib/hostex/client'
+import { HostexClient } from '@/lib/hostex/client'
 import { getHostexConfig } from '@/lib/hostex/config'
 
 export async function GET(request: NextRequest) {
@@ -11,15 +11,15 @@ export async function GET(request: NextRequest) {
     const offset = parseInt(searchParams.get('offset') || '0')
 
     const config = getHostexConfig()
-    const hostex = HostexIntegration.getInstance(config)
+    const hostex = new HostexClient(config.credentials)
 
     // Get reservations from Hostex API
-    const reservations = await hostex.getReservations({
-      propertyId,
-      status,
-      limit,
-      offset,
-    })
+    let reservations = await hostex.getReservations(propertyId || undefined)
+    if (status) {
+      reservations = reservations.filter((r) => r.status === status)
+    }
+    if (offset) reservations = reservations.slice(offset)
+    if (limit) reservations = reservations.slice(0, limit)
 
     // Transform the data to match our interface
     const transformedReservations = reservations.map((reservation: any) => ({
@@ -140,7 +140,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const config = getHostexConfig()
-    const hostex = HostexIntegration.getInstance(config)
+    const hostex = new HostexClient(config.credentials)
 
     const body = await request.json()
     const { action, reservationId, ...data } = body
@@ -177,15 +177,11 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(cancelledReservation)
 
       case 'confirm':
-        if (!reservationId) {
-          return NextResponse.json(
-            { error: 'Reservation ID is required for confirmation' },
-            { status: 400 }
-          )
-        }
-        const confirmedReservation =
-          await hostex.confirmReservation(reservationId)
-        return NextResponse.json(confirmedReservation)
+        // If API doesn't support confirm explicitly, treat as update with status
+        const confirmed = await hostex.updateReservation(reservationId, {
+          status: 'confirmed',
+        } as any)
+        return NextResponse.json(confirmed)
 
       default:
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 })

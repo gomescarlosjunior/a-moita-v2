@@ -368,7 +368,7 @@ export default function IntegrationTestPage() {
       },
       async () => {
         await new Promise((resolve) => setTimeout(resolve, 500))
-        const conflicts = [] // No conflicts found
+        const conflicts: any[] = [] // No conflicts found
         return {
           message: `${conflicts.length} conflitos detectados`,
           data: { conflicts, lastCheck: new Date().toISOString() },

@@ -31,6 +31,9 @@ export interface SyncResult {
   reservationsUpdated: number
   availabilityUpdated: number
   errors: string[]
+  // When composed with CalendarSyncResult (see lib/hostex/index.ts)
+  // we also expose conflicts detected during calendar sync.
+  conflictsDetected?: import('./calendar-sync').SyncConflict[]
 }
 
 export class PropertyManager {

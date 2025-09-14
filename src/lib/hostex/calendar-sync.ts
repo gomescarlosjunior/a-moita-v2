@@ -16,7 +16,7 @@ export interface CalendarEvent {
     phone?: string
   }
   amount?: number
-  status: 'confirmed' | 'pending' | 'cancelled'
+  status: 'confirmed' | 'pending' | 'cancelled' | 'completed'
   lastUpdated: string
 }
 
