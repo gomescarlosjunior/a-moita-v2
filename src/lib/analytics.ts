@@ -229,8 +229,8 @@ export const trackPageView = (path: string, title?: string) => {
 export const initScrollTracking = () => {
   if (typeof window === 'undefined') return
 
-  let scrollThresholds = [25, 50, 75, 90]
-  let trackedThresholds: number[] = []
+  const scrollThresholds = [25, 50, 75, 90]
+  const trackedThresholds: number[] = []
 
   const handleScroll = () => {
     const scrollPercent = Math.round(
