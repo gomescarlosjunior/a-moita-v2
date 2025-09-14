@@ -315,7 +315,9 @@ export default function HomePage() {
               <a
                 href="/chaleAOrigem"
                 className="inline-block rounded-full bg-teal-900 px-8 py-3 font-medium text-[#f5f5f0] transition-colors hover:bg-teal-800"
-                onClick={() => analytics.trackCTAClick('ver_mais', 'hero_section')}
+                onClick={() =>
+                  analytics.trackCTAClick('ver_mais', 'hero_section')
+                }
               >
                 Ver Mais
               </a>

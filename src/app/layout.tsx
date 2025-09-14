@@ -59,7 +59,7 @@ export default function RootLayout({
             }}
           />
         )}
-        
+
         {/* Google Analytics 4 */}
         {isProduction && (
           <>

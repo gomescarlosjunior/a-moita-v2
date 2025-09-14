@@ -193,7 +193,11 @@ export const analytics = {
   },
 
   // Error tracking
-  trackError: (errorType: string, errorMessage: string, errorLocation?: string) => {
+  trackError: (
+    errorType: string,
+    errorMessage: string,
+    errorLocation?: string
+  ) => {
     trackEvent({
       action: 'error',
       category: 'technical',
@@ -230,11 +234,16 @@ export const initScrollTracking = () => {
 
   const handleScroll = () => {
     const scrollPercent = Math.round(
-      (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100
+      (window.scrollY /
+        (document.documentElement.scrollHeight - window.innerHeight)) *
+        100
     )
 
-    scrollThresholds.forEach(threshold => {
-      if (scrollPercent >= threshold && !trackedThresholds.includes(threshold)) {
+    scrollThresholds.forEach((threshold) => {
+      if (
+        scrollPercent >= threshold &&
+        !trackedThresholds.includes(threshold)
+      ) {
         trackedThresholds.push(threshold)
         analytics.trackScroll(threshold)
       }
@@ -242,7 +251,7 @@ export const initScrollTracking = () => {
   }
 
   window.addEventListener('scroll', handleScroll, { passive: true })
-  
+
   // Cleanup function
   return () => window.removeEventListener('scroll', handleScroll)
 }
