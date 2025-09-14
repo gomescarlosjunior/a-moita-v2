@@ -7,6 +7,7 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import SmartCalendar from '@/components/SmartCalendar'
 import ActiveReservationBar from '@/components/ActiveReservationBar'
+import { analytics } from '@/lib/analytics'
 
 // Dynamically import components with no SSR
 const FAQ = dynamic(() => import('@/app/components/FAQ'), { ssr: false })
