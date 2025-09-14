@@ -312,7 +312,13 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              {/* Botão 'Reservar Agora' removido conforme solicitado; a busca será o CTA principal */}
+              <a
+                href="/chaleAOrigem"
+                className="inline-block rounded-full bg-teal-900 px-8 py-3 font-medium text-[#f5f5f0] transition-colors hover:bg-teal-800"
+                onClick={() => analytics.trackCTAClick('ver_mais', 'hero_section')}
+              >
+                Ver Mais
+              </a>
             </motion.div>
           </div>
         </div>
@@ -441,7 +447,7 @@ export default function HomePage() {
                   onClick={handleReserveClick}
                   className="inline-block rounded-full bg-teal-900 px-8 py-3 font-medium text-[#f5f5f0] transition-colors hover:bg-teal-800"
                 >
-                  Reservar
+                  Ver Mais
                 </a>
               </div>
             </div>
