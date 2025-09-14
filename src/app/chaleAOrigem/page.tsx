@@ -719,8 +719,8 @@ export default function ChaleAOrigemPage() {
                     </h2>
                     <p className="mb-4 text-gray-600">
                       A Moita | Refúgio Natural em Abadiânia-GO, Fazenda Lages
-                      do Capivari - BR-414, KM 22 - Chácara 62 - Posse d'Abadia,
-                      Abadiânia - GO, 72940-000
+                      do Capivari - BR-414, KM 22 - Chácara 62 - Posse
+                      d&apos;Abadia, Abadiânia - GO, 72940-000
                     </p>
                     <div className="overflow-hidden rounded-2xl border border-gray-200">
                       <div className="relative h-[260px] w-full sm:h-[300px] md:h-[360px] lg:h-[400px]">
@@ -729,7 +729,7 @@ export default function ChaleAOrigemPage() {
                           src={
                             'https://www.google.com/maps?q=' +
                             encodeURIComponent(
-                              "A Moita | Refúgio Natural em Abadiânia-GO, Fazenda Lages do Capivari - BR-414, KM 22 - Chácara 62 - Posse d'Abadia, Abadiânia - GO, 72940-000"
+                              'A Moita | Refúgio Natural em Abadiânia-GO, Fazenda Lages do Capivari - BR-414, KM 22 - Chácara 62 - Posse d&apos;Abadia, Abadiânia - GO, 72940-000'
                             ) +
                             '&output=embed'
                           }

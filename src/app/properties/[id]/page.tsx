@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { useParams, useRouter } from 'next/navigation'
 import {
@@ -69,12 +69,7 @@ export default function PropertyDetailsPage() {
   const [error, setError] = useState<string | null>(null)
   const [showConnectModal, setShowConnectModal] = useState(false)
 
-  useEffect(() => {
-    fetchPropertyDetails()
-    fetchReservations()
-  }, [propertyId])
-
-  const fetchPropertyDetails = async () => {
+  const fetchPropertyDetails = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/hostex/properties/${propertyId}`)
@@ -90,9 +85,9 @@ export default function PropertyDetailsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [propertyId])
 
-  const fetchReservations = async () => {
+  const fetchReservations = useCallback(async () => {
     try {
       const response = await fetch(
         `/api/hostex/reservations?propertyId=${propertyId}`
@@ -104,7 +99,12 @@ export default function PropertyDetailsPage() {
     } catch (err) {
       console.error('Error fetching reservations:', err)
     }
-  }
+  }, [propertyId])
+
+  useEffect(() => {
+    fetchPropertyDetails()
+    fetchReservations()
+  }, [fetchPropertyDetails, fetchReservations])
 
   const handleSync = async () => {
     if (!property) return
