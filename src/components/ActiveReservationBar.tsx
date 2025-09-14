@@ -3,9 +3,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { createPortal } from 'react-dom'
+import { analytics } from '@/lib/analytics'
 import { DayPicker, DateRange } from 'react-day-picker'
 import 'react-day-picker/dist/style.css'
-import { createPortal } from 'react-dom'
 
 interface GuestCounts {
   adults: number
@@ -144,6 +145,17 @@ export default function ActiveReservationBar() {
   const handleSearch = () => {
     if (!range?.from || !range?.to || totalPeople === 0) return
 
+    // Track search event
+    analytics.trackSearch('property_search', {
+      check_in: format(range.from, 'yyyy-MM-dd'),
+      check_out: format(range.to, 'yyyy-MM-dd'),
+      guests: totalPeople,
+      adults: guests.adults,
+      children: guests.children,
+      babies: guests.babies,
+      pets: guests.pets,
+    })
+
     const searchParams = new URLSearchParams({
       check_in: format(range.from, 'yyyy-MM-dd'),
       check_out: format(range.to, 'yyyy-MM-dd'),
@@ -166,7 +178,6 @@ export default function ActiveReservationBar() {
       ref={barRef}
       className="relative z-[200] mx-auto w-full max-w-[40.8rem]"
     >
-      {' '}
       {/* ~15% menor que 48rem (max-w-3xl) */}
       {/* Global styles (must NOT be nested under other styled-jsx) */}
       <style jsx global>{`
@@ -273,6 +284,7 @@ export default function ActiveReservationBar() {
         <div className="relative flex-1">
           <button
             onClick={() => {
+              analytics.trackCTAClick('open_calendar', 'reservation_bar')
               const next = !openCalendar
               setOpenCalendar(next)
               setOpenGuests(false)
@@ -300,6 +312,7 @@ export default function ActiveReservationBar() {
         <div className="relative flex-1">
           <button
             onClick={() => {
+              analytics.trackCTAClick('open_calendar', 'reservation_bar')
               const next = !openCalendar
               setOpenCalendar(next)
               setOpenGuests(false)
@@ -327,6 +340,7 @@ export default function ActiveReservationBar() {
         <div className="relative flex-1">
           <button
             onClick={() => {
+              analytics.trackCTAClick('open_guests', 'reservation_bar')
               setOpenGuests(!openGuests)
               setOpenCalendar(false)
             }}
@@ -350,7 +364,10 @@ export default function ActiveReservationBar() {
 
         {/* Search Button */}
         <button
-          onClick={handleSearch}
+          onClick={() => {
+            analytics.trackCTAClick('reservar_button', 'reservation_bar')
+            handleSearch()
+          }}
           disabled={isSearchDisabled}
           className="ml-1.5 rounded-full px-4 py-2 text-xs font-semibold text-white transition-colors disabled:bg-gray-300"
           style={{ backgroundColor: isSearchDisabled ? '#d1d5db' : '#0d2b24' }}

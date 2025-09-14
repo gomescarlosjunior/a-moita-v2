@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { analytics, initScrollTracking } from '@/lib/analytics'
 import {
   HOSTEX_WIDGET_ID,
   getListing,
@@ -35,6 +36,14 @@ export default function ChaleAOrigemPage() {
   useEffect(() => {
     // Mark as mounted to avoid SSR rendering of client-only parts
     setMounted(true)
+    
+    // Track property view
+    analytics.trackPropertyView('Chalé A Origem', 'direct')
+    
+    // Initialize scroll tracking
+    const cleanupScroll = initScrollTracking()
+    
+    return cleanupScroll
   }, [])
 
   useEffect(() => {
@@ -96,11 +105,16 @@ export default function ChaleAOrigemPage() {
   }, [])
 
   const handleBookingClick = () => {
+    analytics.trackCTAClick('reservar_header', 'chale_origem_page')
+    analytics.trackReservationStart('Chalé A Origem')
+    
     const bookingUrl = buildBookingUrl('origem')
     window.open(bookingUrl, '_blank', 'width=800,height=600')
   }
 
   const handleMapClick = () => {
+    analytics.trackPropertyInterest('Chalé A Origem', 'location')
+    
     const mapUrl = 'https://maps.app.goo.gl/sc86nBWqpmRsiL4u7'
 
     const isMobile =
@@ -395,7 +409,10 @@ export default function ChaleAOrigemPage() {
                 ))}
               </div>
               <button
-                onClick={() => setShowAllPhotos(true)}
+                onClick={() => {
+                  analytics.trackPropertyInterest('Chalé A Origem', 'gallery')
+                  setShowAllPhotos(true)
+                }}
                 className="mt-4 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 Mostrar todas as fotos
@@ -611,13 +628,15 @@ export default function ChaleAOrigemPage() {
 
                       {mounted && hostexLoaded ? (
                         <div id="hostex-widget-container">
-                          <hostex-booking-widget
-                            listing-id={ORIGEM_LISTING.listingId}
-                            id={HOSTEX_WIDGET_ID}
-                            checkin={bookingParams.checkin || ''}
-                            checkout={bookingParams.checkout || ''}
-                            guests={bookingParams.guests || '1'}
-                          />
+                          <div onClick={() => analytics.trackReservationStep('widget_interaction', 'Chalé A Origem')}>
+                            <hostex-booking-widget
+                              listing-id={ORIGEM_LISTING.listingId}
+                              id={HOSTEX_WIDGET_ID}
+                              checkin={bookingParams.checkin || ''}
+                              checkout={bookingParams.checkout || ''}
+                              guests={bookingParams.guests || '1'}
+                            />
+                          </div>
                         </div>
                       ) : (
                         <div
@@ -753,10 +772,7 @@ export default function ChaleAOrigemPage() {
                             fill="none"
                           >
                             <path
-                              d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7z"
-                              fill="#d90429"
-                            />
-                            <circle cx="12" cy="9" r="3" fill="#ffffff" />
+                              d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.43.27-.83.63-1.01 1.07-.36.88-.32 1.83-.3 2.76.1 1.09.81 2.16 1.83 2.5 1.2.4 2.62-.1 3.31-1.08.23-.33.43-.69.48-1.09.1-.74.16-1.47.17-2.21.14-1.24-.06-2.7-.26-3.7.81.56 1.73.95 2.6 1.44.45.25.94.51 1.35.85.21.18.45.32.7.44.1.05.2.1.3.14.1.03.2.07.31.08.1.02.2.03.3.03.1 0 .2-.01.3-.03.1-.01.2-.05.31-.08.1-.04.2-.09.3-.14.25-.11.49-.26.7-.44.41-.34.9-.6 1.35-.85.87-.49 1.79-.88 2.6-1.44v-4.64c-1.63.1-3.26.05-4.89.04-.01 1.17.03 2.35-.01 3.52-.56-.38-1.23-.67-1.89-.9-1.1-.39-2.26-.57-3.43-.7-.12-.02-.24-.02-.36-.02-1.23 0-2.46.11-3.66.36-1.48.31-2.92.91-4.2 1.76-1.26.84-2.27 1.99-2.91 3.32-.64 1.32-.9 2.79-.85 4.27.1 2.85 1.5 5.53 3.87 7.09 1.37.9 2.99 1.42 4.64 1.5 1.06.05 2.12-.03 3.16-.29 1.56-.39 3-1.14 4.2-2.2 1.2-1.06 2.03-2.45 2.4-3.99.2-.82.27-1.66.28-2.5.03-1.87.02-3.74.02-5.61 0-1.23.01-2.47 0-3.7.01-1.65 0-3.3 0-4.95z" />
                           </svg>
                         </div>
                       </div>
@@ -769,6 +785,7 @@ export default function ChaleAOrigemPage() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-block font-medium hover:underline"
+                          onClick={() => analytics.trackOutboundLink('https://www.google.com/maps/search/?api=1&query=V4VF+XC, Abadiânia, Goiás', 'Ver no Google Maps')}
                         >
                           Ver no Google Maps (abrir em nova aba)
                         </a>
