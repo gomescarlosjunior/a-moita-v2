@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import SmartCalendar from '@/components/SmartCalendar'
+import ActiveReservationBar from '@/components/ActiveReservationBar'
 
 // Dynamically import components with no SSR
 const FAQ = dynamic(() => import('@/app/components/FAQ'), { ssr: false })
@@ -261,17 +262,33 @@ export default function HomePage() {
       </header>
 
       {/* Hero Section */}
-      <div className="relative bg-teal-900 pb-32 pt-24 sm:pb-40 lg:pb-64 lg:pt-40">
-        <div className="absolute inset-0 overflow-hidden">
+      <div className="relative bg-teal-900 pb-32 pt-8 sm:pb-40 lg:pb-64 lg:pt-20">
+        {/* Hero Background */}
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/70" />
           <Image
-            src="/assets/backgrounds/waves-header.png"
+            src="/assets/backgrounds/bg-waves.png"
             alt="Background waves"
             fill
             className="object-cover opacity-90"
             priority
           />
         </div>
+
+        {/* Active Reservation Bar - Moved to top */}
         <div className="container relative z-10 mx-auto px-4">
+          <motion.div
+            className="mx-auto max-w-4xl"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <ActiveReservationBar />
+          </motion.div>
+        </div>
+
+        {/* Hero Content */}
+        <div className="container relative z-10 mx-auto px-4 pt-20">
           <div className="mx-auto max-w-4xl text-center">
             <motion.h1
               className="mb-6 font-heading text-4xl tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl"
