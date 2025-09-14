@@ -681,7 +681,7 @@ export default function ChaleAOrigemPage() {
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          <path d="M9.049 2c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                         </svg>
                         <span className="font-medium text-gray-900">4.9</span>
                         <span className="text-gray-600">(12 avaliações)</span>
@@ -719,32 +719,49 @@ export default function ChaleAOrigemPage() {
                     </h2>
                     <p className="mb-4 text-gray-600">
                       A Moita | Refúgio Natural em Abadiânia-GO, Fazenda Lages
-                      do Capivari - BR-414, KM 22 - Chácara 62 - Posse
+                      do Capivari – BR-414, KM 22 – Chácara 62 – Posse
                       d&apos;Abadia, Abadiânia - GO, 72940-000
                     </p>
                     <div className="overflow-hidden rounded-2xl border border-gray-200">
                       <div className="relative h-[260px] w-full sm:h-[300px] md:h-[360px] lg:h-[400px]">
                         <iframe
-                          title="Mapa - Onde você estará"
-                          src={
-                            'https://www.google.com/maps?q=' +
-                            encodeURIComponent(
-                              'A Moita | Refúgio Natural em Abadiânia-GO, Fazenda Lages do Capivari - BR-414, KM 22 - Chácara 62 - Posse d&apos;Abadia, Abadiânia - GO, 72940-000'
-                            ) +
-                            '&output=embed'
-                          }
-                          width="100%"
-                          height="100%"
-                          style={{
-                            border: 0,
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                          }}
-                          allowFullScreen
+                          title="Mapa - A Moita | Refúgio Natural"
+                          className="absolute inset-0 h-full w-full"
                           loading="lazy"
                           referrerPolicy="no-referrer-when-downgrade"
+                          src={
+                            // Force a marker using Plus Code and tighten zoom for clarity
+                            'https://www.google.com/maps?&q=' +
+                            encodeURIComponent('V4VF+XC, Abadiânia, Goiás') +
+                            '&markers=' +
+                            encodeURIComponent('V4VF+XC, Abadiânia, Goiás') +
+                            '&z=17&hl=pt-BR&output=embed'
+                          }
                         />
+                        {/* Always-visible pin overlay (does not block interactions) */}
+                        <div
+                          aria-hidden
+                          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
+                          style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.45))' }}
+                        >
+                          <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7z" fill="#d90429" />
+                            <circle cx="12" cy="9" r="3" fill="#ffffff" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div className="px-4 pb-4 text-sm text-teal-700">
+                        <a
+                          href={
+                            'https://www.google.com/maps/search/?api=1&query=' +
+                            encodeURIComponent('V4VF+XC, Abadiânia, Goiás')
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-block font-medium hover:underline"
+                        >
+                          Ver no Google Maps (abrir em nova aba)
+                        </a>
                       </div>
                     </div>
                   </div>
