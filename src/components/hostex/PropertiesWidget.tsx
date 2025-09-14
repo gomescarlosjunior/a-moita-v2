@@ -118,7 +118,9 @@ function PropertyCard({ property, onSync, onViewDetails }: PropertyCardProps) {
 
       {/* Connected Channels */}
       <div className="mb-4">
-        <p className="mb-2 text-sm font-medium text-gray-700">Canais Conectados</p>
+        <p className="mb-2 text-sm font-medium text-gray-700">
+          Canais Conectados
+        </p>
         <div className="flex flex-wrap gap-2">
           {property.connectedChannels.length > 0 ? (
             property.connectedChannels.map((channel) => (
@@ -143,7 +145,9 @@ function PropertyCard({ property, onSync, onViewDetails }: PropertyCardProps) {
               </div>
             ))
           ) : (
-            <span className="text-sm text-gray-500">Nenhum canal conectado</span>
+            <span className="text-sm text-gray-500">
+              Nenhum canal conectado
+            </span>
           )}
         </div>
       </div>
@@ -163,7 +167,9 @@ function PropertyCard({ property, onSync, onViewDetails }: PropertyCardProps) {
           disabled={syncing}
           className="flex items-center space-x-2 rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700 disabled:opacity-50"
         >
-          <ArrowPathIcon className={`h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />
+          <ArrowPathIcon
+            className={`h-4 w-4 ${syncing ? 'animate-spin' : ''}`}
+          />
           <span>{syncing ? 'Sincronizando...' : 'Sincronizar'}</span>
         </button>
       </div>
@@ -187,7 +193,9 @@ export default function PropertiesWidget() {
           disabled={loading}
           className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-800 disabled:opacity-50"
         >
-          <ArrowPathIcon className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+          <ArrowPathIcon
+            className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`}
+          />
           <span>Atualizar</span>
         </button>
       </div>
@@ -229,7 +237,9 @@ export default function PropertiesWidget() {
                       {getStatusLabel(property.status)}
                     </span>
                   </div>
-                  <p className="mb-3 text-sm text-gray-600">{property.address}</p>
+                  <p className="mb-3 text-sm text-gray-600">
+                    {property.address}
+                  </p>
 
                   <div className="mb-4 grid grid-cols-3 gap-4">
                     <div className="text-center">
@@ -254,7 +264,9 @@ export default function PropertiesWidget() {
 
                   <div className="mb-4 flex items-center justify-between text-sm text-gray-600">
                     <span>Canais: {property.connectedChannels.length}</span>
-                    <span>Ocupação: {property.metrics.occupancyRate.toFixed(1)}%</span>
+                    <span>
+                      Ocupação: {property.metrics.occupancyRate.toFixed(1)}%
+                    </span>
                   </div>
                 </div>
               </div>
